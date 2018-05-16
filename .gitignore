@@ -67,11 +67,10 @@ fabric.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-.idea/misc.xml
-.idea/modules.xml
-.idea/sonarlint/
-.idea/vcs.xml
+.idea
+
 concurrent/src/main/resources/
 concurrent/src/test/
 concurrent/target/
 exercise.iml
+concurrent.iml
