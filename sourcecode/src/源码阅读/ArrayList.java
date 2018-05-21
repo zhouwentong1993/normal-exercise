@@ -262,6 +262,7 @@ public class ArrayList<E> extends AbstractList<E>
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
      * OutOfMemoryError: Requested array size exceeds VM limit
+     * ArrayList 最大容量，有的 VM 会出现内存溢出问题。但是如果扩容的话，还是会扩展到 Integer.max_value 的大小。
      */
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
@@ -322,6 +323,8 @@ public class ArrayList<E> extends AbstractList<E>
      * Returns <tt>true</tt> if this list contains no elements.
      *
      * @return <tt>true</tt> if this list contains no elements
+     *
+     * 没有兼容 null
      */
     public boolean isEmpty() {
         return size == 0;
@@ -346,6 +349,10 @@ public class ArrayList<E> extends AbstractList<E>
      * More formally, returns the lowest index <tt>i</tt> such that
      * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>,
      * or -1 if there is no such index.
+     * 正序查找第一个相等的对象。
+     * 这个方法好一点儿，首先判断了 null，他们认为 null 是特殊情况，不应该和其他情况并用。
+     * 第二个，也是最关键的一个，用 equals 去认定是否相等，这样如果判断的是具体的对象，比如 Student，那么
+     * 就可以用自定义的 equals 实现，非常灵活。
      */
     public int indexOf(Object o) {
         if (o == null) {
@@ -366,6 +373,7 @@ public class ArrayList<E> extends AbstractList<E>
      * More formally, returns the highest index <tt>i</tt> such that
      * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>,
      * or -1 if there is no such index.
+     * 同上，只不过是逆序
      */
     public int lastIndexOf(Object o) {
         if (o == null) {
@@ -384,6 +392,8 @@ public class ArrayList<E> extends AbstractList<E>
      * Returns a shallow copy of this <tt>ArrayList</tt> instance.  (The
      * elements themselves are not copied.)
      *
+     * 克隆一个 ArrayList，调用的是 Object 的方法，Object 调用的是本地方法。
+     * 初始化了 modCount。
      * @return a clone of this <tt>ArrayList</tt> instance
      */
     public Object clone() {
@@ -411,6 +421,7 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * @return an array containing all of the elements in this list in
      *         proper sequence
+     *         转换成数组，但是是 Object[] 类型的
      */
     public Object[] toArray() {
         return Arrays.copyOf(elementData, size);
@@ -439,6 +450,8 @@ public class ArrayList<E> extends AbstractList<E>
      *         is not a supertype of the runtime type of every element in
      *         this list
      * @throws NullPointerException if the specified array is null
+     *
+     * 将 List 转化成 Array，根据我的测试用例，当且仅当 Array 的 length > List 的 size 时，会将 List 的所有数据拷贝到 Array 中去
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
@@ -453,6 +466,7 @@ public class ArrayList<E> extends AbstractList<E>
 
     // Positional Access Operations
 
+    // 根据 index 获取数组中的元素
     @SuppressWarnings("unchecked")
     E elementData(int index) {
         return (E) elementData[index];
@@ -464,6 +478,8 @@ public class ArrayList<E> extends AbstractList<E>
      * @param  index index of the element to return
      * @return the element at the specified position in this list
      * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 获取指定下标的元素，如果超过列表大小，抛出异常。
+     *
      */
     public E get(int index) {
         rangeCheck(index);
@@ -479,6 +495,8 @@ public class ArrayList<E> extends AbstractList<E>
      * @param element element to be stored at the specified position
      * @return the element previously at the specified position
      * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 只要涉及到下标的操作，都会对 ArrayList 的范围进行限制，如果输入参数不符合，则抛出异常。
+     * 返回 oldValue
      */
     public E set(int index, E element) {
         rangeCheck(index);
@@ -493,10 +511,15 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * @param e element to be appended to this list
      * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * 新增元素，add 操作是有返回值的，有意义吗？什么时候会增加失败，代码里面直接返回 true，如果正常走完，是不可能发生失败的。
+     * 这几段代码都比较有意思，他没有通过返回值来获取值，我觉得我以后也要尽量通过局部变量的参数传递而不是返回值来实现功能了。
      */
     public boolean add(E e) {
+        // 确保容量 ok，所以 ArrayList 触发扩容是在 add 操作的时候
         ensureCapacityInternal(size + 1);  // Increments modCount!!
+        // 扩容成功，下一个元素为指定的元素
         elementData[size++] = e;
+        // 只算我看到的，几乎所有的 Collection 里面的 add 方法最后一句都是 return true，这是为什么呢？？
         return true;
     }
 
@@ -508,6 +531,10 @@ public class ArrayList<E> extends AbstractList<E>
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
      * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 在指定位置添加元素，假如原 List = {"a","b","c","d"}，如果我调用了 add(1,"w") 那么最后的结果是 List = {"a","w","b","c","d"}
+     * 代码是严格按照顺序来的
+     * 1. 参数校验，防止 index 非法。
+     * 2. 确保容量大小合适，不至于
      */
     public void add(int index, E element) {
         rangeCheckForAdd(index);

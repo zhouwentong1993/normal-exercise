@@ -63,4 +63,31 @@ public class TestArrayList {
         System.out.println(-2 >> 1);
     }
 
+    @Test
+    public void testToArray() throws Exception{
+//        TimeUnit.SECONDS.sleep(5);
+        List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        String[] arr = new String[]{"adf",null,null};
+        list.toArray(arr);
+        for (String s : arr) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void testAddWithIndex() throws Exception {
+        List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("d");
+
+        list.add(0, "w");
+        System.out.println(list);
+
+
+    }
+
 }
