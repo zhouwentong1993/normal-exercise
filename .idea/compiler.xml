@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="collection" />
         <module name="concurrent" />
+        <module name="sourcecode" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="collection" target="1.8" />
-      <module name="concurrent" target="1.8" />
+      <module name="collection" target="1.5" />
+      <module name="concurrent" target="1.5" />
+      <module name="sourcecode" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
