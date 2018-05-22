@@ -2,6 +2,7 @@ package com.finup.list;
 
 import org.junit.Test;
 
+import javax.jnlp.IntegrationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +88,71 @@ public class TestArrayList {
         list.add(0, "w");
         System.out.println(list);
 
+    }
 
+    @Test
+    public void testRemove() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.remove(2);
+        System.out.println(list);
+    }
+
+    @Test
+    public void testAddAll() {
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        list.add("6");
+        list.add("7");
+        list.add("8");
+        list.addAll(2, list);
+        System.out.println(list);
+
+    }
+
+    @Test
+    public void testContains() {
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        list.add("6");
+        list.add("7");
+        list.add("8");
+        System.out.println(list.contains(new Object()));
+
+    }
+
+    @Test
+    public void testRemoveAll() {
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        list.add("5");
+        list.add("5");
+        list.add("5");
+        list.add("5");
+        list.add("5");
+        List<String> list2 = new ArrayList<>();
+        list2.add("1");
+        list2.add("2");
+        list2.add("3");
+        list.removeAll(list2);
+        System.out.println(list);
+        System.out.println();
     }
 
 }

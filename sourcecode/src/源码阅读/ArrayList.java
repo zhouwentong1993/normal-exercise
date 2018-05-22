@@ -554,6 +554,9 @@ public class ArrayList<E> extends AbstractList<E>
      * @param index the index of the element to be removed
      * @return the element that was removed from the list
      * @throws IndexOutOfBoundsException {@inheritDoc}
+     *
+     * 移除元素，并没有对数组进行缩容操作。
+     * 代码清晰，将最后一位置为 null，使得 GC 更好的工作，但意图是回收哪个元素？肯定不是数组元素，应该是数组的最后一个元素。
      */
     public E remove(int index) {
         rangeCheck(index);
@@ -582,6 +585,11 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * @param o element to be removed from this list, if present
      * @return <tt>true</tt> if this list contained the specified element
+     * 重载了，现在就有一个问题，如果我有一个 List<Integer>，那么我调用 list.remove(1) 是调用的哪一个方法呢？
+     * 在 Effective Java 中作者举过这个例子，优先选择最匹配的方法运行。所以是调用的 remove(index) 这个方法。
+     * 调用了 fastRemove 方法，就在下面。
+     * 还是不太理解，remove 方法返回 boolean 的含义是什么
+     * <tt>true</tt> if an element was removed as a result of this call
      */
     public boolean remove(Object o) {
         if (o == null) {
@@ -603,6 +611,7 @@ public class ArrayList<E> extends AbstractList<E>
     /*
      * Private remove method that skips bounds checking and does not
      * return the value removed.
+     * 快速移除，不保留返回值
      */
     private void fastRemove(int index) {
         modCount++;
@@ -616,6 +625,7 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Removes all of the elements from this list.  The list will
      * be empty after this call returns.
+     * 清除列表
      */
     public void clear() {
         modCount++;
@@ -639,6 +649,14 @@ public class ArrayList<E> extends AbstractList<E>
      * @param c collection containing elements to be added to this list
      * @return <tt>true</tt> if this list changed as a result of the call
      * @throws NullPointerException if the specified collection is null
+     * 在一个列表的基础上增加另外一个列表
+     * 转换成数组
+     * 确保容量够用
+     * 数组元素复制
+     * 自身元素数据维护
+     * 返回结果就是添加过来的数组长度是否为 0
+     * modCount ++ 在确保容量的方法里面已经执行了，即使容量没有调整，即当前容量满足要求
+     * 也要 modCount ++，这是由调用上层决定的，就是我调用你这个方法了，就是要修改 ArrayList 的。
      */
     public boolean addAll(Collection<? extends E> c) {
         Object[] a = c.toArray();
@@ -663,6 +681,8 @@ public class ArrayList<E> extends AbstractList<E>
      * @return <tt>true</tt> if this list changed as a result of the call
      * @throws IndexOutOfBoundsException {@inheritDoc}
      * @throws NullPointerException if the specified collection is null
+     * 在指定位置添加一个 Collection，需要确保入参可用。
+     * 数组复制分两个部分
      */
     public boolean addAll(int index, Collection<? extends E> c) {
         rangeCheckForAdd(index);
@@ -695,6 +715,9 @@ public class ArrayList<E> extends AbstractList<E>
      *          toIndex > size() ||
      *          toIndex < fromIndex})
      */
+    // 按照范围移除数据，没有任何异常处理的代码
+    // 主要是 System.arraycopy 已经处理了，如果你传入的数组下标之类的数据不合法，直接抛出异常。
+    // 我始终认为，如果代码里面过多地掺杂异常代码，会导致代码非常难看。
     protected void removeRange(int fromIndex, int toIndex) {
         modCount++;
         int numMoved = size - toIndex;
@@ -714,6 +737,7 @@ public class ArrayList<E> extends AbstractList<E>
      * runtime exception.  This method does *not* check if the index is
      * negative: It is always used immediately prior to an array access,
      * which throws an ArrayIndexOutOfBoundsException if index is negative.
+     * 校验传入的下标是否在 size 之内。
      */
     private void rangeCheck(int index) {
         if (index >= size)
@@ -722,6 +746,7 @@ public class ArrayList<E> extends AbstractList<E>
 
     /**
      * A version of rangeCheck used by add and addAll.
+     * 为 add 和 addAll 提供的校验方法，你看人家这个命名，简单高效。
      */
     private void rangeCheckForAdd(int index) {
         if (index > size || index < 0)
@@ -733,6 +758,7 @@ public class ArrayList<E> extends AbstractList<E>
      * Of the many possible refactorings of the error handling code,
      * this "outlining" performs best with both server and client VMs.
      */
+    // 提供更加完善的异常信息，直接使用字符串拼接
     private String outOfBoundsMsg(int index) {
         return "Index: "+index+", Size: "+size;
     }
@@ -751,6 +777,7 @@ public class ArrayList<E> extends AbstractList<E>
      * (<a href="Collection.html#optional-restrictions">optional</a>),
      *         or if the specified collection is null
      * @see Collection#contains(Object)
+     * 做了一次非空校验
      */
     public boolean removeAll(Collection<?> c) {
         Objects.requireNonNull(c);
@@ -778,23 +805,29 @@ public class ArrayList<E> extends AbstractList<E>
         return batchRemove(c, true);
     }
 
+    // 这个单词不认识，但是通过上下文代码，可以看出是如果是 true，就是 remove，如果是 false，就是取差集
     private boolean batchRemove(Collection<?> c, boolean complement) {
+        // 复制一个本地变量，命名有讲究吗？为啥用的是跟之前一样的名字。
         final Object[] elementData = this.elementData;
+        // 这个应该是有讲究，r -> read,w -> write
         int r = 0, w = 0;
         boolean modified = false;
         try {
             for (; r < size; r++)
                 if (c.contains(elementData[r]) == complement)
+                    // 通过遍历，把当前元素的值放到数组的头部，最后再次清空从 0 到 w 的元素就行
                     elementData[w++] = elementData[r];
         } finally {
             // Preserve behavioral compatibility with AbstractCollection,
             // even if c.contains() throws.
+            // 当且仅当 contains 抛出异常时，处理
             if (r != size) {
                 System.arraycopy(elementData, r,
                                  elementData, w,
                                  size - r);
                 w += size - r;
             }
+            // 将从 0 到 w 的元素置空，当成删除，同时，modCount
             if (w != size) {
                 // clear to let GC do its work
                 for (int i = w; i < size; i++)
