@@ -9,14 +9,16 @@
         <module name="algorithm" />
         <module name="collection" />
         <module name="concurrent" />
+        <module name="mq" />
         <module name="sourcecode" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="algorithm" target="1.8" />
-      <module name="collection" target="1.8" />
-      <module name="concurrent" target="1.8" />
-      <module name="sourcecode" target="1.8" />
+      <module name="algorithm" target="1.5" />
+      <module name="collection" target="1.5" />
+      <module name="concurrent" target="1.5" />
+      <module name="mq" target="1.5" />
+      <module name="sourcecode" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
