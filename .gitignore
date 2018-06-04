@@ -85,3 +85,4 @@ mq/src/test/
 mq/target/
 sourcecode/src/main/
 sourcecode/src/test/
+/.idea/compiler.xml
