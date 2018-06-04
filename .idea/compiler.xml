@@ -14,8 +14,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="algorithm" target="1.5" />
-      <module name="collection" target="1.5" />
+      <module name="algorithm" target="" />
+      <module name="collection" target="1.8" />
       <module name="concurrent" target="1.5" />
       <module name="mq" target="1.5" />
       <module name="sourcecode" target="1.5" />

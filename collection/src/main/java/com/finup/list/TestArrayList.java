@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -209,6 +210,22 @@ public class TestArrayList {
             System.out.print(elementDatum + " ");
         }
         System.out.println();
+    }
+
+    @Test
+    public void testIteratorRemove() {
+        List<String> list = new ArrayList<>();
+        list.add("0");
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        Iterator<String> iterator = list.iterator();
+
+        iterator.remove();
+
+        System.out.println(list);
     }
 
 }

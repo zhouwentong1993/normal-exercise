@@ -848,6 +848,7 @@ public class ArrayList<E> extends AbstractList<E>
      *             instance is emitted (int), followed by all of its elements
      *             (each an <tt>Object</tt>) in the proper order.
      */
+    // 通过 io 流将对象写出，暂不解读。与 ObjectOutputStream 相关
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException{
         // Write out element count, and any hidden stuff
@@ -862,6 +863,7 @@ public class ArrayList<E> extends AbstractList<E>
             s.writeObject(elementData[i]);
         }
 
+        // 都是通过这种方式，不允许 modCount 被修改
         if (modCount != expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -870,6 +872,7 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Reconstitute the <tt>ArrayList</tt> instance from a stream (that is,
      * deserialize it).
+     * 从 ObjectInputStream 里面读取对象，都是设置到类共享变量里面。尽量少的返回对象
      */
     private void readObject(java.io.ObjectInputStream s)
         throws java.io.IOException, ClassNotFoundException {
@@ -905,6 +908,7 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
+    // 根据指定的下标返回 ListIterator
     public ListIterator<E> listIterator(int index) {
         if (index < 0 || index > size)
             throw new IndexOutOfBoundsException("Index: "+index);
@@ -938,8 +942,12 @@ public class ArrayList<E> extends AbstractList<E>
      * An optimized version of AbstractList.Itr
      */
     private class Itr implements Iterator<E> {
+        // 下一个元素下标，cursor 的初始化是在 ListItr 的构造方法实现的，ArrayList 不直接使用这个
+        // 所以在这里并没有构造函数
         int cursor;       // index of next element to return
+        // 上一个元素下标，-1 代表没有
         int lastRet = -1; // index of last element returned; -1 if no such
+        // 遍历过程中无法修改
         int expectedModCount = modCount;
 
         public boolean hasNext() {
@@ -955,7 +963,9 @@ public class ArrayList<E> extends AbstractList<E>
             Object[] elementData = ArrayList.this.elementData;
             if (i >= elementData.length)
                 throw new ConcurrentModificationException();
+            // 当前游标后移一位
             cursor = i + 1;
+            // 代码简洁，但是可读性不是很强。我不太喜欢赋值操作和其他操作混用
             return (E) elementData[lastRet = i];
         }
 
@@ -965,6 +975,17 @@ public class ArrayList<E> extends AbstractList<E>
             checkForComodification();
 
             try {
+                // remove 为什么 remove 调 lastRet
+                // 可以考虑下我们日常的操作，通常是取出一个数据，判断该数据，然后对该数据进行操作
+                // 通常范式是：
+                /**
+                 * for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+                 String string = iterator.next();
+                 if (string.isEmpty()) {
+                 iterator.remove();
+                 }
+                 }
+                 */
                 ArrayList.this.remove(lastRet);
                 cursor = lastRet;
                 lastRet = -1;
@@ -1092,11 +1113,14 @@ public class ArrayList<E> extends AbstractList<E>
      * @throws IndexOutOfBoundsException {@inheritDoc}
      * @throws IllegalArgumentException {@inheritDoc}
      */
+    // 返回一个 List 的 子 List，
     public List<E> subList(int fromIndex, int toIndex) {
+        // 范围限制
         subListRangeCheck(fromIndex, toIndex, size);
         return new SubList(this, 0, fromIndex, toIndex);
     }
 
+    // 抛出异常，提供足够丰富的错误信息
     static void subListRangeCheck(int fromIndex, int toIndex, int size) {
         if (fromIndex < 0)
             throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
@@ -1108,6 +1132,7 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     private class SubList extends AbstractList<E> implements RandomAccess {
+        // 命名好，父 List
         private final AbstractList<E> parent;
         private final int parentOffset;
         private final int offset;
@@ -1125,22 +1150,26 @@ public class ArrayList<E> extends AbstractList<E>
         public E set(int index, E e) {
             rangeCheck(index);
             checkForComodification();
+            // 内部类访问外部类的方法。
             E oldValue = ArrayList.this.elementData(offset + index);
             ArrayList.this.elementData[offset + index] = e;
             return oldValue;
         }
 
+        // 实现与之前类似，不过多解读
         public E get(int index) {
             rangeCheck(index);
             checkForComodification();
             return ArrayList.this.elementData(offset + index);
         }
 
+        // 实现与之前类似，不过多解读
         public int size() {
             checkForComodification();
             return this.size;
         }
 
+        // 实现与之前类似，不过多解读
         public void add(int index, E e) {
             rangeCheckForAdd(index);
             checkForComodification();
@@ -1149,6 +1178,7 @@ public class ArrayList<E> extends AbstractList<E>
             this.size++;
         }
 
+        // 实现与之前类似，不过多解读
         public E remove(int index) {
             rangeCheck(index);
             checkForComodification();
@@ -1158,6 +1188,7 @@ public class ArrayList<E> extends AbstractList<E>
             return result;
         }
 
+        // 实现与之前类似，不过多解读
         protected void removeRange(int fromIndex, int toIndex) {
             checkForComodification();
             parent.removeRange(parentOffset + fromIndex,
@@ -1372,6 +1403,7 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /** Index-based split-by-two, lazily initialized Spliterator */
+    // 在 ArrayList 中静态内部类运用较多，比较符合《Effective Java》书中表达的意思。
     static final class ArrayListSpliterator<E> implements Spliterator<E> {
 
         /*
@@ -1405,7 +1437,37 @@ public class ArrayList<E> extends AbstractList<E>
          * less-often-used methods cannot take advantage of most of
          * these streamlinings.
          */
-
+/*
+        *如果ArrayLists是不可变的或结构不可变的(否
+        *添加、删除等)，我们可以实现它们的分裂器
+        *使用数组。拆分器。相反，我们可以检测到同样多
+        *在穿越过程中的干扰实际上没有
+        *牺牲很多性能。我们主要依靠
+        *模式计数。这些不能保证检测并发
+        *违规，有时过于保守
+        *线程内干扰，但检测到足够的问题
+        *在实践中值得。为此，我们( 1 )懒洋洋地
+        *初始化围栏，并期望最迟进行odcount
+        *指出我们需要承诺我们正在检查的状态
+        *反对；从而提高精度。(这不适用于
+        *子列表，创建具有当前非惰性的拆分器
+        *值)。( 2 )我们只演出一场
+        * forEach末尾的“并发修改”异常检查
+        * (性能最敏感的方法)。当使用forEach时
+        * (与迭代器相反)，我们通常只能检测
+        *行动后的干扰，而不是行动前的干扰。进一步地
+        * CME触发检查适用于所有其他可能的情况
+        *违反假设，例如零或太小
+        * elementData数组给定了它的大小( )，它只能有
+        *由于干扰而发生。这允许内环
+        * forEach在没有进一步检查的情况下运行，以及
+        *简化λ分辨率。虽然这需要
+        *检查次数，请注意，在常见情况下
+        * list . stream ( )。forEach ( a )，没有检查或其他计算
+        *发生在除了自身内部以外的任何地方。另一个
+        *不常使用的方法不能充分利用
+        *这些流线。
+* /
         private final ArrayList<E> list;
         private int index; // current index, modified on advance/split
         private int fence; // -1 until used; then one past last index
