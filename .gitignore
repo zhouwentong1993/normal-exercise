@@ -69,20 +69,10 @@ hs_err_pid*
 
 .idea
 
-concurrent/src/main/resources/
-concurrent/src/test/
 concurrent/target/
 exercise.iml
 concurrent.iml
-algorithm/src/main/resources/
-algorithm/src/test/
 algorithm/target/
-collection/src/main/resources/
-collection/src/test/
 collection/target/
-mq/src/main/resources/
-mq/src/test/
 mq/target/
-sourcecode/src/main/
-sourcecode/src/test/
 /.idea/compiler.xml
