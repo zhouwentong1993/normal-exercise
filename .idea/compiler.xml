@@ -10,6 +10,7 @@
         <module name="collection" />
         <module name="concurrent" />
         <module name="mq" />
+        <module name="netty" />
         <module name="sourcecode" />
       </profile>
     </annotationProcessing>
@@ -18,6 +19,7 @@
       <module name="collection" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="mq" target="1.8" />
+      <module name="netty" target="1.8" />
       <module name="sourcecode" target="1.8" />
     </bytecodeTargetLevel>
   </component>
