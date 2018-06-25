@@ -13,6 +13,9 @@ import io.netty.handler.codec.string.StringDecoder;
  * Created by zhouwentong on 2018/6/20.
  */
 public class NettyServer {
+
+    private static int port = 1000;
+
     public static void main(String[] args) throws Exception {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
@@ -31,7 +34,24 @@ public class NettyServer {
                     }
                 });
             }
-        }).bind(8888);
-
+        });
+        bindPort(serverBootstrap, port);
     }
+
+    /**
+     * 如果当前接口被占用，则自动选择下一端口尝试，直到尝试成功为止
+     */
+    private static void bindPort(ServerBootstrap serverBootstrap, int port) {
+        serverBootstrap.bind(port).addListener(future -> {
+            if (future.isSuccess()) {
+                System.out.println("绑定端口" + port + "成功");
+            } else {
+                System.out.println("绑定端口" + port + "失败");
+                bindPort(serverBootstrap, port + 1);
+            }
+        });
+    }
+
+
+
 }
