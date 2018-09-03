@@ -27,7 +27,7 @@ public class BracketsMatching {
     }
 
     public static boolean match(String source) {
-        Stack<String> stack = new Stack<String>();
+        Stack<String> stack = new Stack<>();
         for (int i = 0; i < source.length(); i++) {
             String s = String.valueOf(source.charAt(i));
             if (biMap.containsKey(s)) {
