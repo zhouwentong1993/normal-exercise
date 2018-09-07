@@ -10,6 +10,7 @@
         <module name="algorithm" />
         <module name="collection" />
         <module name="concurrent" />
+        <module name="javacore" />
         <module name="mq" />
         <module name="netty" />
         <module name="redis" />
@@ -23,6 +24,7 @@
       <module name="concurrent" target="1.8" />
       <module name="guava_main" target="1.8" />
       <module name="guava_test" target="1.8" />
+      <module name="javacore" target="1.5" />
       <module name="mq" target="1.8" />
       <module name="netty" target="1.8" />
       <module name="redis" target="1.8" />
