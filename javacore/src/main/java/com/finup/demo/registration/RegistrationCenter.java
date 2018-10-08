@@ -1,32 +1,60 @@
 package com.finup.demo.registration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class RegistrationCenter {
-    private Map<Client, String> clientSubscription = new ConcurrentHashMap<>();
 
-    private List<RegistrationServerInfo> serviceRegistration = new ArrayList<>();
+    private static final int MAX_RETRY_COUNT = 10;
+
+    private List<Client> clients = new ArrayList<>();
+
+    private Set<RegistrationServerInfo> serviceRegistration = new HashSet<>();
 
     public void serviceRegister(RegistrationServerInfo registrationServerInfo) {
         Objects.requireNonNull(registrationServerInfo, "注册信息不能为空");
         Objects.requireNonNull(registrationServerInfo.getServiceName(), "服务名称不能为空");
         Objects.requireNonNull(registrationServerInfo.getQualifiedName(), "全限定名不能为空");
-        for (RegistrationServerInfo serverInfo : serviceRegistration) {
-            if (serverInfo.equals(registrationServerInfo)) {
 
-            }
+        if (Utils.setReplace(serviceRegistration, registrationServerInfo)) {
+            serviceAddEvent(registrationServerInfo);
+        } else {
+            serviceUpdateEvent(registrationServerInfo);
         }
     }
 
-    public void serviceUpdateEvent() {
-
+    /**
+     * 服务更新事件
+     */
+    private void serviceUpdateEvent(RegistrationServerInfo registrationServerInfo) {
+        clients.forEach(client -> {
+            if (client.getSubscribedServiceName().equals(registrationServerInfo.getServiceName())) {
+                notifyClient(registrationServerInfo, client);
+            }
+        });
     }
 
-    public void serviceAddEvent() {
+    /**
+     * 服务新增事件
+     */
+    private void serviceAddEvent(RegistrationServerInfo registrationServerInfo) {
+        clients.forEach(client -> notifyClient(registrationServerInfo, client));
+    }
 
+    private void notifyClient(RegistrationServerInfo registrationServerInfo, Client client) {
+        CompletableFuture.runAsync(() -> {
+            int retryCount = 0;
+            boolean received = client.received(registrationServerInfo);
+            while (!received && retryCount <= MAX_RETRY_COUNT) {
+                retryCount = retryCount + 1;
+                try {
+                    TimeUnit.SECONDS.sleep(retryCount * 2L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                received = client.received(registrationServerInfo);
+            }
+        });
     }
 }

@@ -1,5 +1,7 @@
 package com.finup.demo.registration;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import java.util.Objects;
 
 public class RegistrationServerInfo {
@@ -37,5 +39,10 @@ public class RegistrationServerInfo {
     @Override
     public int hashCode() {
         return Objects.hash(serviceName);
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }
