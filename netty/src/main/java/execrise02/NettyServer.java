@@ -1,20 +1,18 @@
-package execrise01;
+package execrise02;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
 
 /**
  * Created by zhouwentong on 2018/6/20.
  */
 public class NettyServer {
 
-    private static int port = 1000;
+    private static int port = 8888;
 
     public static void main(String[] args) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -22,19 +20,19 @@ public class NettyServer {
         NioEventLoopGroup boos = new NioEventLoopGroup();
         NioEventLoopGroup worker = new NioEventLoopGroup();
 
-        serverBootstrap.group(boos, worker).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<NioSocketChannel>() {
+        serverBootstrap
+                .group(boos, worker)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
-            @Override
-            protected void initChannel(NioSocketChannel nioSocketChannel) {
-                nioSocketChannel.pipeline().addLast(new StringDecoder());
-                nioSocketChannel.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                     @Override
-                    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) {
-                        System.out.println(s);
+                    protected void initChannel(NioSocketChannel nioSocketChannel) {
+                        nioSocketChannel.pipeline().addLast(new FirstServerHandler());
                     }
                 });
-            }
-        });
         bindPort(serverBootstrap, port);
     }
 
@@ -51,7 +49,6 @@ public class NettyServer {
             }
         });
     }
-
 
 
 }
