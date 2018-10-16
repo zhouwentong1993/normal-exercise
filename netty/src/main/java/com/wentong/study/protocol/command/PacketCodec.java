@@ -1,5 +1,7 @@
 package com.wentong.study.protocol.command;
 
+import com.wentong.study.protocol.command.request.LoginRequestPacket;
+import com.wentong.study.protocol.command.response.LoginResponsePacket;
 import com.wentong.study.serialize.Serializer;
 import com.wentong.study.serialize.SerializerAlgorithm;
 import com.wentong.study.serialize.impl.JsonSerializer;
@@ -16,19 +18,22 @@ import java.util.Map;
 public class PacketCodec {
     private static final int MAGIC_NUMBER = 0x12345678;
 
-    private static Map<Byte, Serializer> serializerMap;
-    private static Map<Byte, Class<? extends Packet>> packetTypeMap;
+    private  Map<Byte, Serializer> serializerMap;
+    private  Map<Byte, Class<? extends Packet>> packetTypeMap;
 
-    static {
+    public static final PacketCodec INSTANCE = new PacketCodec();
+
+    private PacketCodec() {
         serializerMap = new HashMap<>();
         serializerMap.put(SerializerAlgorithm.JSON_ALGORITHM, new JsonSerializer());
 
         packetTypeMap = new HashMap<>();
         packetTypeMap.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
+        packetTypeMap.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
     }
 
-    public ByteBuf encode(Packet packet) {
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+    public ByteBuf encode(ByteBufAllocator byteBufAllocator,Packet packet) {
+        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
         Byte serializerAlgorithm = Serializer.DEFAULT.getSerializerAlgorithm();

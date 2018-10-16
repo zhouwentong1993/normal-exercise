@@ -30,7 +30,7 @@ public class NettyServer {
 
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) {
-                        nioSocketChannel.pipeline().addLast(new FirstServerHandler());
+                        nioSocketChannel.pipeline().addLast(new ServerHandler());
                     }
                 });
         bindPort(serverBootstrap, port);

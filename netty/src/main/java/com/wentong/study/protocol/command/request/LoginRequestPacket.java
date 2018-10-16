@@ -1,5 +1,7 @@
-package com.wentong.study.protocol.command;
+package com.wentong.study.protocol.command.request;
 
+import com.wentong.study.protocol.command.Command;
+import com.wentong.study.protocol.command.Packet;
 import lombok.Data;
 
 @Data
