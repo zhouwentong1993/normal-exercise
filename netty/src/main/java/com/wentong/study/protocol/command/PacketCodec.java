@@ -1,7 +1,9 @@
 package com.wentong.study.protocol.command;
 
 import com.wentong.study.protocol.command.request.LoginRequestPacket;
+import com.wentong.study.protocol.command.request.MessageRequestPacket;
 import com.wentong.study.protocol.command.response.LoginResponsePacket;
+import com.wentong.study.protocol.command.response.MessageResponsePacket;
 import com.wentong.study.serialize.Serializer;
 import com.wentong.study.serialize.SerializerAlgorithm;
 import com.wentong.study.serialize.impl.JsonSerializer;
@@ -27,9 +29,13 @@ public class PacketCodec {
         serializerMap = new HashMap<>();
         serializerMap.put(SerializerAlgorithm.JSON_ALGORITHM, new JsonSerializer());
 
+        // todo
+        //  在类启动的时候，全局扫描带有注解的 command，这样添加一个，这里也要添加，太麻烦了
         packetTypeMap = new HashMap<>();
         packetTypeMap.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
         packetTypeMap.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
+        packetTypeMap.put(Command.MESSAGE_REQUEST, MessageRequestPacket.class);
+        packetTypeMap.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
     }
 
     public ByteBuf encode(ByteBufAllocator byteBufAllocator,Packet packet) {
