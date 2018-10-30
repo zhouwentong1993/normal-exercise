@@ -1,4 +1,4 @@
-package com.finup.demo;
+package com.finup.demo.core;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,4 +1,4 @@
-package com.finup.demo;
+package com.finup.demo.core;
 
 /**
  * 自动装箱，拆箱，通过 javap 查看

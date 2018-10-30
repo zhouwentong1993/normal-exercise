@@ -1,4 +1,4 @@
-package com.finup.demo;
+package com.finup.demo.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -25,6 +25,7 @@ class DynamicProxy implements InvocationHandler {
         this.target = target;
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getName().startsWith("s")) {
             System.out.printf("method name: %s has bean proxied", method.getName());
@@ -37,6 +38,7 @@ class DynamicProxy implements InvocationHandler {
 }
 
 class HelloImpl implements Hello {
+    @Override
     public void sayHello() {
         System.out.println("HelloImpl.sayHello");
     }
