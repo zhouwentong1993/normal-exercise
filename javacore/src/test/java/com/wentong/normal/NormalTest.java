@@ -23,4 +23,10 @@ public class NormalTest {
 
         System.out.println(set);
     }
+
+    @Test
+    public void testWeek() {
+
+    }
 }
+
