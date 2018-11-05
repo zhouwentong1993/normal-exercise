@@ -474,9 +474,14 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         return c >= 0;
     }
 
+    /**
+     * 阻塞式获取元素，通过 while 循环实现。
+     */
     public E take() throws InterruptedException {
         E x;
+        // 经常用 c = -1 这种数字标识来作为最终确定状态的标志。
         int c = -1;
+        // 仍然是本地副本，不影响全局变量。
         final AtomicInteger count = this.count;
         final ReentrantLock takeLock = this.takeLock;
         takeLock.lockInterruptibly();
@@ -496,9 +501,11 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         return x;
     }
 
+    // 按照时长阻塞获取队列元素
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
         E x = null;
         int c = -1;
+        // 将上层对象转换成更为通用的下层对象。好的设计
         long nanos = unit.toNanos(timeout);
         final AtomicInteger count = this.count;
         final ReentrantLock takeLock = this.takeLock;
@@ -507,6 +514,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
             while (count.get() == 0) {
                 if (nanos <= 0)
                     return null;
+                //
                 nanos = notEmpty.awaitNanos(nanos);
             }
             x = dequeue();

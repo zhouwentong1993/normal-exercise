@@ -5,6 +5,9 @@ import org.junit.Test;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TestLinkedBlockingQueue {
 
@@ -41,7 +44,91 @@ public class TestLinkedBlockingQueue {
             queue.offer(String.valueOf(i));
         }
         System.out.println(queue);
+    }
+
+    @Test
+    public void testCurrentPutAndOffer() throws Exception {
+        LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        Thread thread = new Thread(() -> {
+            for (; ; ) {
+                try {
+                    queue.put(String.valueOf(121111));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+        TimeUnit.SECONDS.sleep(1);
+        queue.offer(String.valueOf(123));
+
+        System.out.println(queue);
+    }
+
+    Lock lock = new ReentrantLock();
+
+    @Test
+    public void testReentrantLock() throws Exception {
+        new Thread(this::method1).start();
+        new Thread(this::method2).start();
+        TimeUnit.SECONDS.sleep(100);
+    }
+
+    private void method1() {
+        try {
+            lock.lock();
+            System.out.println("TestLinkedBlockingQueue.method1");
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+
+    private void method2() {
+        try {
+            lock.lock();
+            System.out.println("TestLinkedBlockingQueue.method2");
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+
+    @Test
+    public void testCondition() throws Exception {
+        Lock lock = new ReentrantLock();
+        Condition condition1 = lock.newCondition();
+        Condition condition2 = lock.newCondition();
+        new Thread(() -> {
+            TimeUnit timeUnit = TimeUnit.SECONDS;
+            long nanos = timeUnit.toNanos(10);
+            try {
+                lock.lock();
+                TimeUnit.SECONDS.sleep(10);
+                System.out.println("signal");
+                // signal 为什么要设计成只允许当前线程去 signal 呢？？？
+                condition1.signal();
+                long l = condition1.awaitNanos(nanos);
+                System.out.println(l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+
+        }).start();
+
+        TimeUnit.SECONDS.sleep(10);
+
+//        condition1.signal();
 
     }
+
 
 }
