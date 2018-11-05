@@ -2,6 +2,7 @@ package com.wentong.demo;
 
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -127,6 +128,14 @@ public class TestLinkedBlockingQueue {
         TimeUnit.SECONDS.sleep(10);
 
 //        condition1.signal();
+    }
+
+    @Test
+    public void testArrayResize() {
+        String[] strs = new String[10];
+        Integer[] o = (Integer[]) Array.newInstance(Integer.class, 100);
+        System.out.println(o.length );
+
 
     }
 

@@ -514,7 +514,9 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
             while (count.get() == 0) {
                 if (nanos <= 0)
                     return null;
-                //
+                // 我在使用 Condition 做测试的时候，发现 signal 只能在当前线程去调用，否则会抛出 monitor 异常。
+                // 为什么要这么搞，在阻塞队列里面，操作不一定都是当前线程吧。
+                // 肯定是我理解错了，记一个 TODO ！！
                 nanos = notEmpty.awaitNanos(nanos);
             }
             x = dequeue();
@@ -529,6 +531,8 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         return x;
     }
 
+
+    // 无阻塞地获取队列中元素
     public E poll() {
         final AtomicInteger count = this.count;
         if (count.get() == 0)
@@ -538,6 +542,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         final ReentrantLock takeLock = this.takeLock;
         takeLock.lock();
         try {
+            // 无阻塞
             if (count.get() > 0) {
                 x = dequeue();
                 c = count.getAndDecrement();
@@ -552,12 +557,15 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         return x;
     }
 
+    // 看一下 first 的值
     public E peek() {
         if (count.get() == 0)
             return null;
         final ReentrantLock takeLock = this.takeLock;
         takeLock.lock();
         try {
+            // 实际上不是看的第一个值，而是看的第二个值。
+            // 这跟入队列和出队列的方法是一致的，所以现在只剩下搞懂这个问题了。
             Node<E> first = head.next;
             if (first == null)
                 return null;
@@ -571,6 +579,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Unlinks interior Node p with predecessor trail.
      */
+    // 用 trail 替换 p
     void unlink(Node<E> p, Node<E> trail) {
         // assert isFullyLocked();
         // p.next is not changed, to allow iterators that are
@@ -594,14 +603,18 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
+    // 移除指定元素
     public boolean remove(Object o) {
+        // 队列中不含 null
         if (o == null) return false;
+        // 全部锁定，禁止读写。因为都有可能产生脏数据
         fullyLock();
         try {
             for (Node<E> trail = head, p = trail.next;
                  p != null;
                  trail = p, p = p.next) {
                 if (o.equals(p.item)) {
+                    // 将该元素移除，用前驱节点指向后继节点。
                     unlink(p, trail);
                     return true;
                 }
@@ -620,6 +633,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * @param o object to be checked for containment in this queue
      * @return {@code true} if this queue contains the specified element
      */
+    // 是否包含，锁住整个队列，然后 equals 比较对象。
     public boolean contains(Object o) {
         if (o == null) return false;
         fullyLock();
@@ -646,6 +660,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      *
      * @return an array containing all of the elements in this queue
      */
+    // 全量复制队列
     public Object[] toArray() {
         fullyLock();
         try {
@@ -696,10 +711,12 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified array is null
      */
     @SuppressWarnings("unchecked")
+    // 如果容量不够，自动扩容。
     public <T> T[] toArray(T[] a) {
         fullyLock();
         try {
             int size = count.get();
+            // 扩容操作，对数组中的泛型类型，扩容到队列的 size
             if (a.length < size)
                 a = (T[])java.lang.reflect.Array.newInstance
                     (a.getClass().getComponentType(), size);
@@ -715,6 +732,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         }
     }
 
+    // 全量打印
     public String toString() {
         fullyLock();
         try {
@@ -741,6 +759,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * Atomically removes all of the elements from this queue.
      * The queue will be empty after this call returns.
      */
+    // 遍历清除
     public void clear() {
         fullyLock();
         try {
@@ -773,6 +792,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException          {@inheritDoc}
      * @throws IllegalArgumentException      {@inheritDoc}
      */
+    // 将队列里的数目导出到指定的集合中去，并删除队列中的指定数目的数据
     public int drainTo(Collection<? super E> c, int maxElements) {
         if (c == null)
             throw new NullPointerException();
@@ -790,6 +810,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
             int i = 0;
             try {
                 while (i < n) {
+                    // 不断地移除头部元素，将头部元素转移到 Collection 中，将头部 item 置为 null。
                     Node<E> p = h.next;
                     c.add(p.item);
                     p.item = null;
@@ -826,6 +847,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         return new Itr();
     }
 
+    // 内部迭代器，发现整个 Collection 里面都是这种设计
     private class Itr implements Iterator<E> {
         /*
          * Basic weakly-consistent iterator.  At all times hold the next
