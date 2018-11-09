@@ -134,9 +134,13 @@ public class TestLinkedBlockingQueue {
     public void testArrayResize() {
         String[] strs = new String[10];
         Integer[] o = (Integer[]) Array.newInstance(Integer.class, 100);
-        System.out.println(o.length );
+        System.out.println(o.length);
+    }
 
-
+    @Test
+    public void testLinkedBlockingQueueCap0() throws Exception {
+        LinkedBlockingQueue<Object> objects = new LinkedBlockingQueue<>(0);
+        objects.put("aaa");
     }
 
 
