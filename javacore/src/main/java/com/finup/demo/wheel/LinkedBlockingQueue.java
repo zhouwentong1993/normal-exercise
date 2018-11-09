@@ -170,20 +170,58 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             putLock.unlock();
         }
+        if (c >= 0) {
+            signalNotEmpty();
+        }
         return false;
     }
 
     @Override
     public E take() throws InterruptedException {
-        if (head == null) {
-            return null;
+        int c = -1;
+        ReentrantLock takeLock = this.takeLock;
+        AtomicInteger size = this.size;
+        E result = null;
+        takeLock.lock();
+        try {
+            while (size.get() == 0) {
+                notEmpty.await();
+            }
+            Node<E> node = dequeue();
+            result = node.item;
+            c = size.getAndDecrement();
+            if (c - 1 > 0) {
+                notEmpty.signal();
+            }
+        } finally {
+            takeLock.unlock();
+        }
+        if (c <= capacity) {
+            signalNotFull();
         }
 
-        return null;
+        return result;
     }
 
     @Override
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
+        int c = -1;
+        ReentrantLock takeLock = this.takeLock;
+        AtomicInteger size = this.size;
+        E result;
+        long nanos = unit.toNanos(timeout);
+        while (size.get() == 0) {
+            if (nanos == 0) {
+                return null;
+            }
+            nanos = notFull.awaitNanos(nanos);
+        }
+        result = dequeue().item;
+        c = size.getAndDecrement();
+        if (c - 1 > 0) {
+
+        }
+
         return null;
     }
 
