@@ -181,7 +181,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         int c = -1;
         ReentrantLock takeLock = this.takeLock;
         AtomicInteger size = this.size;
-        E result = null;
+        E result;
         takeLock.lock();
         try {
             while (size.get() == 0) {
@@ -208,27 +208,33 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         int c = -1;
         ReentrantLock takeLock = this.takeLock;
         AtomicInteger size = this.size;
+        takeLock.lock();
         E result;
-        long nanos = unit.toNanos(timeout);
-        while (size.get() == 0) {
-            if (nanos == 0) {
-                return null;
+        try {
+            long nanos = unit.toNanos(timeout);
+            while (size.get() == 0) {
+                if (nanos == 0) {
+                    return null;
+                }
+                nanos = notFull.awaitNanos(nanos);
             }
-            nanos = notFull.awaitNanos(nanos);
+            result = dequeue().item;
+            c = size.getAndDecrement();
+            if (c - 1 > 0) {
+                notFull.signal();
+            }
+        } finally {
+            takeLock.unlock();
         }
-        result = dequeue().item;
-        c = size.getAndDecrement();
-        if (c - 1 > 0) {
-
-            // todo，做需求，等下次再做   
+        if (c < capacity) {
+            signalNotEmpty();
         }
-
-        return null;
+        return result;
     }
 
     @Override
     public int remainingCapacity() {
-        return 0;
+        return capacity - size.intValue();
     }
 
     @Override
