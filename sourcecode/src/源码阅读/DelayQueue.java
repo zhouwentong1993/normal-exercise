@@ -225,16 +225,20 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
      * @return the head of this queue
      * @throws InterruptedException {@inheritDoc}
      */
+    // 阻塞式获取元素
     public E take() throws InterruptedException {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
             for (;;) {
                 E first = q.peek();
+                // 如果第一个元素是空，阻塞
                 if (first == null)
                     available.await();
                 else {
+                    // get the delay time
                     long delay = first.getDelay(NANOSECONDS);
+                    // time is ok
                     if (delay <= 0)
                         return q.poll();
                     first = null; // don't retain ref while waiting
