@@ -28,6 +28,17 @@
             <artifactId>jmh-core</artifactId>
             <version>0.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-core</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-annotation-aspectj</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
 
     </dependencies>
 
