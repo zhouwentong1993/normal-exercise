@@ -423,6 +423,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /**
      * The number of key-value mappings contained in this map.
      */
+    // 键值对的个数
     transient int size;
 
     /**
@@ -432,6 +433,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * rehash).  This field is used to make iterators on Collection-views of
      * the HashMap fail-fast.  (See ConcurrentModificationException).
      */
+    // HashMap 被结构性修改的次数，主要是保证 fail-fast
     transient int modCount;
 
     /**
@@ -442,7 +444,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     // (The javadoc description is true upon serialization.
     // Additionally, if the table array has not been allocated, this
     // field holds the initial array capacity, or zero signifying
-    // DEFAULT_INITIAL_CAPACITY.)
+    // DEFAULT_INITIAL_CAPACITY.
+
+    // Map 容量
     int threshold;
 
     /**
@@ -450,6 +454,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @serial
      */
+    // 加载因子
     final float loadFactor;
 
     /* ---------------- Public operations -------------- */
@@ -463,6 +468,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
+
+    // 初始化 HashMap
     public HashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0)
             throw new IllegalArgumentException("Illegal initial capacity: " +
@@ -473,6 +480,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             throw new IllegalArgumentException("Illegal load factor: " +
                                                loadFactor);
         this.loadFactor = loadFactor;
+        // 当你传入的值为 5 时，会变成 8，当传入 1 时，会变成 1
         this.threshold = tableSizeFor(initialCapacity);
     }
 
@@ -483,6 +491,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param  initialCapacity the initial capacity.
      * @throws IllegalArgumentException if the initial capacity is negative.
      */
+    // 通过默认的 load factor 创建 HashMap
     public HashMap(int initialCapacity) {
         this(initialCapacity, DEFAULT_LOAD_FACTOR);
     }
@@ -491,6 +500,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Constructs an empty <tt>HashMap</tt> with the default initial capacity
      * (16) and the default load factor (0.75).
      */
+    // 创建一个空的 HashMap，但是 threshold 是在什么时候赋值的呢？看注释说所有字段都被设置为默认的了。
     public HashMap() {
         this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
     }

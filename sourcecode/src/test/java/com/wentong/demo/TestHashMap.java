@@ -1,7 +1,9 @@
 package com.wentong.demo;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -24,9 +26,30 @@ public class TestHashMap {
         }
 
         System.out.println(map.size());
+    }
 
+    int tableSizeFor(int cap) {
+        int n = cap - 1;
+        n |= n >>> 1;
+        n |= n >>> 2;
+        n |= n >>> 4;
+        n |= n >>> 8;
+        n |= n >>> 16;
+        return (n < 0) ? 1 : (n >= Integer.MAX_VALUE) ? Integer.MAX_VALUE : n + 1;
+    }
 
+    @Test
+    public void testTableSize() {
+        int i = tableSizeFor(5);
+        Assert.assertEquals(i, 8);
+    }
 
+    @Test
+    public void testInit() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        Field threshold = map.getClass().getDeclaredField("threshold");
+        String s = threshold.toString();
+        System.out.println(s);
     }
 
     class Foo {
