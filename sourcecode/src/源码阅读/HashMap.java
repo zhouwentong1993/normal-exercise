@@ -515,6 +515,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @throws  NullPointerException if the specified map is null
      */
     public HashMap(Map<? extends K, ? extends V> m) {
+        // 使用当前默认的，不使用传过来的。
         this.loadFactor = DEFAULT_LOAD_FACTOR;
         putMapEntries(m, false);
     }
@@ -529,6 +530,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
         int s = m.size();
         if (s > 0) {
+            // 当 Map 中没有元素时，通过传入 map 的 size() / loadFactor + 1 的方式找到预计容量
             if (table == null) { // pre-size
                 float ft = ((float)s / loadFactor) + 1.0F;
                 int t = ((ft < (float)MAXIMUM_CAPACITY) ?
@@ -536,8 +538,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 if (t > threshold)
                     threshold = tableSizeFor(t);
             }
+            // 当 Map 不为空且元素数量大于当前容量，触发扩容操作，这样的问题在于，有可能需要扩容多次。为什么不按照具体的长度来一步到位扩容呢
             else if (s > threshold)
                 resize();
+            // 遍历 Map，将值放入
             for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
                 K key = e.getKey();
                 V value = e.getValue();
@@ -551,6 +555,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return the number of key-value mappings in this map
      */
+    // 返回实际数量
     public int size() {
         return size;
     }
@@ -560,6 +565,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return <tt>true</tt> if this map contains no key-value mappings
      */
+    // 是否为空，合适的封装。
     public boolean isEmpty() {
         return size == 0;
     }
@@ -581,6 +587,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @see #put(Object, Object)
      */
+    // 通过 key 返回 value，当返回 null 时有两种情况，1. Map 中压根没有这个 key。2. Map 中该 key 存储的是 null。
+    // 没有办法去判断这两种情况，只能通过 containsKey()。在 GO 语言中，从字典中获取值返回两个值，一个是 key 是否存在，一个是值。可以解决这个问题
     public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
@@ -593,16 +601,27 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param key the key
      * @return the node, or null if none
      */
+    // 根据指定的 hash 和 key 获取 Node 节点。
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
+        // 当 table 中有元素 && table
         if ((tab = table) != null && (n = tab.length) > 0 &&
+                // todo 这句什么意思，不懂 TODO，这样是取到第一个节点吗
+//                https://stackoverflow.com/questions/27230938/why-hashmap-insert-new-node-on-index-n-1-hash
+                // 通过 hash 定位到数组中的具体元素，即为 first
             (first = tab[(n - 1) & hash]) != null) {
+            // 校验 hash 和 key（== &&）
+            // 如果 hash 和 key 相同，则返回
             if (first.hash == hash && // always check first node
                 ((k = first.key) == key || (key != null && key.equals(k))))
                 return first;
+            // 否则遍历数组中相同 key 组成的链表或数组，通过遍历得到元素
             if ((e = first.next) != null) {
+                // 如果是 TreeNode。顺便说下，TreeNode 是 LinkedHashMap.Entry<K,V> 的实现类。
+                // 而 LinkedHashMap.Entry<K,V> extends HashMap.Node<K,V>，所以可以通过 instanceof 操作。
                 if (first instanceof TreeNode)
                     return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+                // 遍历数组
                 do {
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
@@ -621,6 +640,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return <tt>true</tt> if this map contains a mapping for the specified
      * key.
      */
+    // 是否包含该 key
     public boolean containsKey(Object key) {
         return getNode(hash(key), key) != null;
     }

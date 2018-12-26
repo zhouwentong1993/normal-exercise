@@ -51,6 +51,12 @@ public class TestHashMap {
     }
 
     @Test
+    public void testHash() {
+        int i = new String("21k3jl12").hashCode();
+        System.out.println(i);
+    }
+
+    @Test
     public void testMapMultiThread() throws Exception {
         Map<Foo, Foo> myMap = Collections.synchronizedMap(new HashMap<>());
         List<Thread> listOfThreads = new ArrayList<>();
