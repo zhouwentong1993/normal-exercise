@@ -4,9 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TestHashMap {
@@ -18,9 +16,9 @@ public class TestHashMap {
     }
 
     @Test
-    public void testMapResizeTreeMap() throws Exception{
+    public void testMapResizeTreeMap() throws Exception {
         TimeUnit.SECONDS.sleep(10);
-        Map<Integer,Foo> map = new HashMap<>(1);
+        Map<Integer, Foo> map = new HashMap<>(1);
         for (int i = 0; i < 8; i++) {
             map.put(i, new Foo());
         }
@@ -52,19 +50,41 @@ public class TestHashMap {
         System.out.println(s);
     }
 
+    @Test
+    public void testMapMultiThread() throws Exception {
+        Map<Foo, Foo> myMap = Collections.synchronizedMap(new HashMap<>());
+        List<Thread> listOfThreads = new ArrayList<>();
+
+        // Create 10 Threads
+        for (int i = 0; i < 10; i++) {
+            Thread thread = new Thread(() -> {
+
+                // Let Each thread insert 3000 Items
+                for (int j = 0; j < 3000; j++) {
+                    Foo key = new Foo();
+                    myMap.put(key, key);
+                }
+
+            });
+            thread.start();
+            listOfThreads.add(thread);
+        }
+
+        for (Thread thread : listOfThreads) {
+            thread.join();
+        }
+        System.out.println("Count should be 30000, actual is : " + myMap.size());
+    }
+
     class Foo {
 
-        @Override
-        public boolean equals(Object o) {
-            return true;
-        }
+        int value = 3;
 
         @Override
         public int hashCode() {
             return 1;
         }
     }
-
 
 
 }
