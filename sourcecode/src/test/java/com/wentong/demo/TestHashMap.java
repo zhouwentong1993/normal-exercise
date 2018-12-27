@@ -57,6 +57,33 @@ public class TestHashMap {
     }
 
     @Test
+    public void testPutIfAbsent() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("aaa", null);
+        map.putIfAbsent("aaa", "bbb");
+        map.putIfAbsent("aaa", "ccc");
+        Assert.assertEquals("bbb", map.get("aaa"));
+    }
+
+    @Test
+    public void testHashMapMaxSize() {
+        Map<String,Object> map = new HashMap<>(1 << 30);
+        for (int i = 0; i < (1 << 30) + 10; i++) {
+            map.put(String.valueOf(i), i);
+        }
+        System.out.println(map.size());
+        System.out.println(map.size() - (1 << 30));
+    }
+
+    @Test
+    public void testRemove() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("aaa", null);
+        System.out.println(map.remove("aaa"));
+        System.out.println(map);
+    }
+
+    @Test
     public void testMapMultiThread() throws Exception {
         Map<Foo, Foo> myMap = Collections.synchronizedMap(new HashMap<>());
         List<Thread> listOfThreads = new ArrayList<>();

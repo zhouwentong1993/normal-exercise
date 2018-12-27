@@ -642,6 +642,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // 是否包含该 key
     public boolean containsKey(Object key) {
+        // 通过 != null 表达正向含义。让上层舒服。
+        // 经常犯的错就是逻辑正反不清楚
         return getNode(hash(key), key) != null;
     }
 
@@ -657,6 +659,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
+    // put，替换
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
@@ -667,49 +670,71 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param hash hash for key
      * @param key the key
      * @param value the value to put
-     * @param onlyIfAbsent if true, don't change existing value
-     * @param evict if false, the table is in creation mode.
+     * @param onlyIfAbsent if true, don't change existing value，只有在缺席情况下才会放入元素，不会替换已经存在的值。HashMap 已经有了 putIfAbsent 方法。
+     * @param evict if false, the table is in creation mode. false -> 代表 table 在创建阶段
      * @return previous value, or null if none
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
+        // 在 HashMap 中的命名比较随意，会出现简写的情况。tab = table,p = previous。n = table.length
+        // 在 ArrayList 中命名比较正式，可能是因为两个不同的人写的。
         Node<K,V>[] tab; Node<K,V> p; int n, i;
+        // 当 table 处于初始化时，通过 resize() 来初始化，resize() 方法有两个作用。
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
+        // HashMap 中经常会用到这些手法，一个语句混杂了赋值和运算。
+        // 找到位置，如果当前数组位置没有元素
         if ((p = tab[i = (n - 1) & hash]) == null)
+            // 正好把待插入放到当前位置，没有 next。
             tab[i] = newNode(hash, key, value, null);
         else {
+            // 数组当前节点有元素，需要 append 元素到链表或 TreeMap 上
             Node<K,V> e; K k;
+            // 如果传入的 key 和 hash 都相等，当前节点即为传入的节点
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
+            // 如果是 TreeNode
             else if (p instanceof TreeNode)
+                // 放入
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
+                // 如果是链表
                 for (int binCount = 0; ; ++binCount) {
+                    // 当为空时，连接到链表的最后
                     if ((e = p.next) == null) {
+                        // 创建新节点，并连接上
                         p.next = newNode(hash, key, value, null);
+                        // 如果大于树的阈值，触发扩容操作。
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 如果链表中的一个元素是传入的元素， break
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
+                    // 切换到下一个元素，因为在 if 语句中， e = p.next 了
                     p = e;
                 }
             }
+            // 传入的 key 存在
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
+                // 当 不覆盖或者 oldValue 为空时，都会覆盖。也就是说 putIfAbsent 方法当 key 存在 && value 为空时，也会替换的。
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
+                // 空函数，钩子函数。
                 afterNodeAccess(e);
                 return oldValue;
             }
         }
         ++modCount;
+        // 先插入，后扩容。
+        // 如果先扩容的话，可能会因为插入的这个元素又会触发变树的操作。猜想这也是可能的一个原因。
         if (++size > threshold)
             resize();
+        // 钩子函数
         afterNodeInsertion(evict);
         return null;
     }
@@ -723,22 +748,31 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return the table
      */
+    // https://stackoverflow.com/questions/8352378/why-does-hashmap-require-that-the-initial-capacity-be-a-power-of-two
+    // 为什么 HashMap 要两倍扩容。1. length - 1 & hash 的操作比 % 的操作性能高。 2. 当两倍扩容时，之前元素的位置要么是当前位置，要么是两倍的位置
+    // 具体来说，还是不太懂。
     final Node<K,V>[] resize() {
+        // 在 ArrayList 和 HashMap 中都是把全局变量 copy 一份，在本地用。
         Node<K,V>[] oldTab = table;
+        // 都是用原生类型，效率高。
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
         int newCap, newThr = 0;
         if (oldCap > 0) {
+            // 超过最大限制，就不会扩容了。我试图通过写单元测试向 HashMap 里面放 MAX_VALUE 数量的元素，妈的直接内存不够了。
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
             }
+            // 如果扩容之后在合适的容量区间内，两倍扩容
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
                 newThr = oldThr << 1; // double threshold
         }
+        // 用老的 threshold 代替容量
         else if (oldThr > 0) // initial capacity was placed in threshold
             newCap = oldThr;
+        // 重新初始化
         else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
@@ -753,12 +787,18 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
         table = newTab;
         if (oldTab != null) {
+            // 遍历迁移之前的。
             for (int j = 0; j < oldCap; ++j) {
+                // 问题：HashMap 里面的链表是怎么存储的。通过 Node 节点如何标识同数组和同链表的元素。
                 Node<K,V> e;
+                // 如果在 oldTab 里面有的话
                 if ((e = oldTab[j]) != null) {
                     oldTab[j] = null;
+                    // 如果没有链表/TreeMap 的话，自己是一条线。
                     if (e.next == null)
+                        // 把当前元素经过计算，放置到新的数组里面去
                         newTab[e.hash & (newCap - 1)] = e;
+                    // 如果是树
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     else { // preserve order
@@ -766,7 +806,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
                         do {
+                            // 肯定不为空
                             next = e.next;
+                            // 如果为 0，那么意味着在扩容时，这些元素在前后数组中的位置是不变的。
+                            // 感谢 https://www.jianshu.com/p/c91b010dc03a，主要是通过与 oldCap 做与运算，如果得 0，扩容之后的位置不变。
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;
@@ -774,6 +817,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                     loTail.next = e;
                                 loTail = e;
                             }
+                            // 不为 0，意味着这些元素需要在前后数组中需要变化，变化后的位置 = 变化前的位置 + rehash 变化的位置
                             else {
                                 if (hiTail == null)
                                     hiHead = e;
@@ -782,10 +826,12 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
+                        // 仍然置于原地
                         if (loTail != null) {
                             loTail.next = null;
                             newTab[j] = loHead;
                         }
+                        // 放到扩容之后的位置
                         if (hiTail != null) {
                             hiTail.next = null;
                             newTab[j + oldCap] = hiHead;
@@ -801,13 +847,19 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Replaces all linked nodes in bin at index for given hash unless
      * table is too small, in which case resizes instead.
      */
+//    将链表中所有的树节点变成树结构，除非树太小了，做 resize 处理
+    // 将链表变成树
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
+        // 如果 table 为空或者 table 的长度小于 64，做 resize()
+        // todo
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
+        // 当 hash 所处的位置存在元素时
         else if ((e = tab[index = (n - 1) & hash]) != null) {
             TreeNode<K,V> hd = null, tl = null;
             do {
+                // 将节点转成 TreeNode，然后做连接操作
                 TreeNode<K,V> p = replacementTreeNode(e, null);
                 if (tl == null)
                     hd = p;
@@ -818,6 +870,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 tl = p;
             } while ((e = e.next) != null);
             if ((tab[index] = hd) != null)
+                // 树化
                 hd.treeify(tab);
         }
     }
@@ -843,6 +896,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
+    // 移除元素，返回之前的元素。同样的，为 null 代表着两种结果
     public V remove(Object key) {
         Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
@@ -853,12 +907,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Implements Map.remove and related methods
      *
      * @param hash hash for key
-     * @param key the key
-     * @param value the value to match if matchValue, else ignored
-     * @param matchValue if true only remove if value is equal
+     * @param key the key 待移除节点的 key
+     * @param value the value to match if matchValue, else ignored 待移除节点的 value
+     * @param matchValue if true only remove if value is equal 为 true，当 value 相等时移除
      * @param movable if false do not move other nodes while removing
      * @return the node, or null if none
      */
+    // 移除 node 节点。
     final Node<K,V> removeNode(int hash, Object key, Object value,
                                boolean matchValue, boolean movable) {
         Node<K,V>[] tab; Node<K,V> p; int n, index;
