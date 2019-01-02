@@ -802,6 +802,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     else { // preserve order
+                        // 在同一个链表中，resize() 之后会有两种结果，一是维持在原地，二是维持在当前节点 + rehash 的大小。
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
@@ -834,6 +835,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                         // 放到扩容之后的位置
                         if (hiTail != null) {
                             hiTail.next = null;
+                            // 为什么不会有问题呢？是因为 j + oldCap 一定是没有被分配的空间
+                            // 所以就不会有问题。
                             newTab[j + oldCap] = hiHead;
                         }
                     }
@@ -914,12 +917,15 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the node, or null if none
      */
     // 移除 node 节点。
+    // 基本模式是一样的，通过 hash & (length - 1) 来获取 bucket 的位置
+    // 得到位置之后，先判断第一个元素是否是待操作元素，如果是，操作。如果不是，则到链表或 TreeMap 中寻找并操作。
     final Node<K,V> removeNode(int hash, Object key, Object value,
                                boolean matchValue, boolean movable) {
         Node<K,V>[] tab; Node<K,V> p; int n, index;
         if ((tab = table) != null && (n = tab.length) > 0 &&
             (p = tab[index = (n - 1) & hash]) != null) {
             Node<K,V> node = null, e; K k; V v;
+            // 对 key 的判断也是通过 equals 来的。
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 node = p;
@@ -927,6 +933,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 if (p instanceof TreeNode)
                     node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
                 else {
+                    // 遍历，和之前的一样。
                     do {
                         if (e.hash == hash &&
                             ((k = e.key) == key ||
@@ -942,12 +949,15 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                  (value != null && value.equals(v)))) {
                 if (node instanceof TreeNode)
                     ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);
+                // 如果是队首元素，将首部元素的位置前移。
                 else if (node == p)
                     tab[index] = node.next;
+                // 否则将后继节点指为当前节点
                 else
                     p.next = node.next;
                 ++modCount;
                 --size;
+                // callback
                 afterNodeRemoval(node);
                 return node;
             }
@@ -959,11 +969,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Removes all of the mappings from this map.
      * The map will be empty after this call returns.
      */
+    // modCount 在什么时候变化。
     public void clear() {
         Node<K,V>[] tab;
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
+            // 置为 null
             for (int i = 0; i < tab.length; ++i)
                 tab[i] = null;
         }
@@ -977,6 +989,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return <tt>true</tt> if this map maps one or more keys to the
      *         specified value
      */
+    // 遍历，如果带 nodes，遍历 nodes
+    // containsValue 这个方法是 O(N) 的。
     public boolean containsValue(Object value) {
         Node<K,V>[] tab; V v;
         if ((tab = table) != null && size > 0) {
@@ -1006,6 +1020,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return a set view of the keys contained in this map
      */
+    // 返回摘要
     public Set<K> keySet() {
         Set<K> ks = keySet;
         if (ks == null) {
@@ -1026,6 +1041,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         public final Spliterator<K> spliterator() {
             return new KeySpliterator<>(HashMap.this, 0, -1, 0, 0);
         }
+
+        // 遍历，action.accept()
         public final void forEach(Consumer<? super K> action) {
             Node<K,V>[] tab;
             if (action == null)
@@ -1033,6 +1050,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             if (size > 0 && (tab = table) != null) {
                 int mc = modCount;
                 for (int i = 0; i < tab.length; ++i) {
+                    // 遍历 table + 遍历 table 的 Nodes
                     for (Node<K,V> e = tab[i]; e != null; e = e.next)
                         action.accept(e.key);
                 }
@@ -1057,6 +1075,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return a view of the values contained in this map
      */
+    // 类似于 keySet() 都是返回 HashMap 的副本。
     public Collection<V> values() {
         Collection<V> vs = values;
         if (vs == null) {
@@ -1123,6 +1142,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             Map.Entry<?,?> e = (Map.Entry<?,?>) o;
             Object key = e.getKey();
             Node<K,V> candidate = getNode(hash(key), key);
+            // 看看人家怎么写的，人家就不会反着写。
             return candidate != null && candidate.equals(e);
         }
         public final boolean remove(Object o) {
@@ -1155,6 +1175,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     // Overrides of JDK8 Map extension methods
 
+    // 在 HashMap 中，有着很多的 helper 方法，传很多参数，能够支持很多的功能。
+
     @Override
     public V getOrDefault(Object key, V defaultValue) {
         Node<K,V> e;
@@ -1172,6 +1194,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     @Override
+    // 替换方法， 当 key 和 value 都满足条件时。替换。
     public boolean replace(K key, V oldValue, V newValue) {
         Node<K,V> e; V v;
         if ((e = getNode(hash(key), key)) != null &&
@@ -1184,6 +1207,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     @Override
+    // 这个类似于 put
     public V replace(K key, V value) {
         Node<K,V> e;
         if ((e = getNode(hash(key), key)) != null) {

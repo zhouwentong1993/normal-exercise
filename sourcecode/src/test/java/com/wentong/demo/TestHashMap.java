@@ -109,6 +109,64 @@ public class TestHashMap {
         System.out.println("Count should be 30000, actual is : " + myMap.size());
     }
 
+    @Test
+    public void testResize() throws Exception{
+        Map<Foo1,String> map = new HashMap<>(4);
+        Foo1 key = new Foo1(1);
+        map.put(key, "1");
+        Foo1 key1 = new Foo1(5);
+        map.put(key1, "5");
+        Foo1 key2 = new Foo1(13);
+        map.put(key2, "13");
+        Foo1 key3 = new Foo1(29);
+        map.put(key3, "29");
+        map.put(new Foo1(2), "2");
+        map.put(new Foo1(6), "6");
+        System.out.println(map);
+    }
+    @Test
+    public void testResize1() throws Exception{
+        Map<Foo1,String> map = new HashMap<>(8);
+        Foo1 key = new Foo1(1);
+        map.put(key, "1");
+
+        Foo1 key1 = new Foo1(9);
+        map.put(key1, "9");
+
+        Foo1 key2 = new Foo1(25);
+        map.put(key2, "25");
+
+        Foo1 key3 = new Foo1(17);
+        map.put(key3, "17");
+
+        map.put(new Foo1(2), "2");
+        map.put(new Foo1(6), "6");
+        System.out.println(map);
+    }
+
+    @Test
+    public void testResize2() {
+        int oldCap = 4;
+        int newCap = 7;
+        for (int i = 0; i < 10000; i++) {
+            if ((i & oldCap + 4) == (i & newCap)) {
+                System.out.println(i);
+            }
+        }
+    }
+
+    @Test
+    public void testComputeIfAbsent() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("a", "a");
+        map.put("b", "b");
+        map.put("c", "c");
+        map.put("d", "d");
+        map.put("e", "e");
+        map.put("f", "f");
+        System.out.println(map.computeIfAbsent("d", String::toUpperCase));
+    }
+
     class Foo {
 
         int value = 3;
@@ -116,6 +174,19 @@ public class TestHashMap {
         @Override
         public int hashCode() {
             return 1;
+        }
+    }
+
+    class Foo1 {
+        int value;
+
+        public Foo1(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public int hashCode() {
+            return value;
         }
     }
 
