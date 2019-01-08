@@ -56,18 +56,18 @@ public class TestHashMap {
         System.out.println(i);
     }
 
-    @Test
-    public void testPutIfAbsent() {
-        Map<String,Object> map = new HashMap<>();
-        map.put("aaa", null);
-        map.putIfAbsent("aaa", "bbb");
-        map.putIfAbsent("aaa", "ccc");
-        Assert.assertEquals("bbb", map.get("aaa"));
-    }
+//    @Test
+//    public void testPutIfAbsent() {
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("aaa", null);
+//        map.putIfAbsent("aaa", "bbb");
+//        map.putIfAbsent("aaa", "ccc");
+//        Assert.assertEquals("bbb", map.get("aaa"));
+//    }
 
     @Test
     public void testHashMapMaxSize() {
-        Map<String,Object> map = new HashMap<>(1 << 30);
+        Map<String, Object> map = new HashMap<>(1 << 30);
         for (int i = 0; i < (1 << 30) + 10; i++) {
             map.put(String.valueOf(i), i);
         }
@@ -77,7 +77,7 @@ public class TestHashMap {
 
     @Test
     public void testRemove() {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("aaa", null);
         System.out.println(map.remove("aaa"));
         System.out.println(map);
@@ -110,23 +110,28 @@ public class TestHashMap {
     }
 
     @Test
-    public void testResize() throws Exception{
-        Map<Foo1,String> map = new HashMap<>(4);
+    public void testResize() throws Exception {
+        Map<Foo1, String> map = new HashMap<>(4);
         Foo1 key = new Foo1(1);
         map.put(key, "1");
+
         Foo1 key1 = new Foo1(5);
         map.put(key1, "5");
+
         Foo1 key2 = new Foo1(13);
         map.put(key2, "13");
+
         Foo1 key3 = new Foo1(29);
         map.put(key3, "29");
+
         map.put(new Foo1(2), "2");
         map.put(new Foo1(6), "6");
         System.out.println(map);
     }
+
     @Test
-    public void testResize1() throws Exception{
-        Map<Foo1,String> map = new HashMap<>(8);
+    public void testResize1() throws Exception {
+        Map<Foo1, String> map = new HashMap<>(8);
         Foo1 key = new Foo1(1);
         map.put(key, "1");
 
@@ -157,7 +162,7 @@ public class TestHashMap {
 
     @Test
     public void testComputeIfAbsent() {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("a", "a");
         map.put("b", "b");
         map.put("c", "c");
@@ -165,6 +170,33 @@ public class TestHashMap {
         map.put("e", "e");
         map.put("f", "f");
         System.out.println(map.computeIfAbsent("d", String::toUpperCase));
+    }
+
+    private static HashMap<Integer, String> map = new HashMap<>(2, 0.75f);
+
+    @Test
+    public void testHashMapInfiniteLoop() {
+
+        System.out.println("java版本号：" + System.getProperty("java.version")); // java版本号"
+
+
+        map.put(5, "C");
+
+        new Thread("Thread1") {
+            public void run() {
+                map.put(7, "B");
+                System.out.println(map);
+            }
+
+            ;
+        }.start();
+        new Thread("Thread2") {
+            public void run() {
+                map.put(3, "A");
+                System.out.println(map);
+            }
+
+        }.start();
     }
 
     class Foo {

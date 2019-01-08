@@ -855,7 +855,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
         // 如果 table 为空或者 table 的长度小于 64，做 resize()
-        // todo
+        // MIN_TREEIFY_CAPACITY 代表扩容时树的最小容量
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
         // 当 hash 所处的位置存在元素时
