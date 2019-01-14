@@ -23,4 +23,16 @@ public class TestThreadLocal {
         System.out.println("main:" + threadLocal.get());
 
     }
+
+    @Test
+    public void testPut() {
+        ThreadLocal<String> threadLocal = new ThreadLocal<>();
+        for (int i = 0; i < 1000; i++) {
+            int finalI = i;
+            new Thread(() -> {
+                threadLocal.set("thread:" + finalI);
+            }).start();
+        }
+        System.out.println(threadLocal.get());
+    }
 }
