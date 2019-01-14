@@ -10,6 +10,9 @@ public class TestThreadLocalOOM {
 
     private static final int COUNT = 10000;
 
+    /**
+     * JVM 参数设置为 -Xmx256m，指定内存
+     */
     public static void main(String[] args) throws Exception{
 
         ThreadLocal<List<User>> threadLocal = new ThreadLocal<>();
