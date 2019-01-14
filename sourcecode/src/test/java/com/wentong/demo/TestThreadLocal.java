@@ -18,7 +18,11 @@ public class TestThreadLocal {
         ThreadLocal<String> threadLocal = new ThreadLocal<>();
         threadLocal.set("hello world");
 
-        new Thread(() -> System.out.println("value:" + threadLocal.get())).start();
+        Thread thread = new Thread(() -> {
+            threadLocal.set("aaa");
+            System.out.println("value:" + threadLocal.get());
+        });
+        thread.start();
 
         System.out.println("main:" + threadLocal.get());
 
