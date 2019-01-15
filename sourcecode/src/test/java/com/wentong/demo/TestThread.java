@@ -15,12 +15,13 @@ public class TestThread {
         Thread thread = new Thread(() -> {
             System.out.println("child Thread");
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         thread.start();
+        TimeUnit.SECONDS.sleep(2);
         thread.start();
         TimeUnit.SECONDS.sleep(5);
     }

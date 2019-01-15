@@ -199,6 +199,11 @@ public class TestHashMap {
         }.start();
     }
 
+    @Test
+    public void testTreefy() {
+
+    }
+
     class Foo {
 
         int value = 3;
