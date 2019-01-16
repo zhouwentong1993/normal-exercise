@@ -199,9 +199,53 @@ public class TestHashMap {
         }.start();
     }
 
-    @Test
-    public void testTreefy() {
 
+    /**
+     * 当 put foo9 时，会调用 treeify 方法，但是实际不会变成树结构，因为 tab.length < 64，需要等再多两次 resize 才能到 64，也就是 put foo11 时，这时会将 list 转换成 TreeMap
+     */
+    @Test
+    public void testTreeify() {
+        Map<Foo1,String> map = new HashMap<>();
+        Foo1 foo1 = new Foo1(1);
+        Foo1 foo2 = new Foo1(1);
+        Foo1 foo3 = new Foo1(1);
+        Foo1 foo4 = new Foo1(1);
+        Foo1 foo5 = new Foo1(1);
+        Foo1 foo6 = new Foo1(1);
+        Foo1 foo7 = new Foo1(1);
+        Foo1 foo8 = new Foo1(1);
+        Foo1 foo9 = new Foo1(1);
+        Foo1 foo10 = new Foo1(1);
+        Foo1 foo11 = new Foo1(1);
+        Foo1 foo12 = new Foo1(1);
+        map.put(foo1, "1");
+        map.put(foo2, "2");
+        map.put(foo3, "3");
+        map.put(foo4, "4");
+        map.put(foo5, "5");
+        map.put(foo6, "6");
+        map.put(foo7, "7");
+        map.put(foo8, "8");
+        map.put(foo9, "9");
+        map.put(foo10, "10");
+        map.put(foo11, "11");
+
+
+        map.remove(foo1);
+        map.remove(foo2);
+        map.remove(foo3);
+        map.remove(foo4);
+        map.remove(foo5);
+        map.remove(foo6);
+        map.remove(foo7);
+        map.remove(foo8);
+        map.remove(foo9);
+        map.remove(foo10);
+        map.remove(foo11);
+//        map.put(foo10, "10");
+//        map.put(foo11, "11");
+//        map.put(foo12, "12");
+        System.out.println(map);
     }
 
     class Foo {
