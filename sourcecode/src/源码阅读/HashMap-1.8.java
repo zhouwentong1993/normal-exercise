@@ -931,6 +931,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 node = p;
             else if ((e = p.next) != null) {
                 if (p instanceof TreeNode)
+                    // 在 TreeMap 中找到对应节点，没有立刻删除，在下面统一删除。可能会多几次的循环。
                     node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
                 else {
                     // 遍历，和之前的一样。
