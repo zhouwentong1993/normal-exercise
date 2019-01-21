@@ -77,3 +77,5 @@ collection/target/
 mq/target/
 /.idea/compiler.xml
 *.iml
+sourcecode/target/generated-sources/
+sourcecode/target/generated-test-sources/
