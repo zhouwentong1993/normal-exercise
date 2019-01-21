@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class TestAQS {
+public class  TestAQS {
 
     @Test
     public void testCondition() throws Exception {
