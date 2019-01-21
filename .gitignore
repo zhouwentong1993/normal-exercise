@@ -76,3 +76,4 @@ algorithm/target/
 collection/target/
 mq/target/
 /.idea/compiler.xml
+*.iml
