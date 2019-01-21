@@ -1,5 +1,6 @@
 package com.wentong.demo;
 
+import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -197,6 +198,12 @@ public class TestHashMap {
             }
 
         }.start();
+    }
+
+    @Test
+    public void testGuavaInitMap() {
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(5);
+
     }
 
 
