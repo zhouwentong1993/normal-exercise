@@ -22,7 +22,10 @@ public class TestReentrantReadWriteLockAndReentrantLock {
                     e.printStackTrace();
                 }
                 for (int j = 0; j < 100; j++) {
-                    
+                    synchronizedArrayList.add(Thread.currentThread().getName() + j);
+                }
+                for (int j = 0; j < 1000; j++) {
+                    synchronizedArrayList.get(j);
                 }
             });
             thread.setName("thread:" + i);
@@ -36,12 +39,12 @@ public class TestReentrantReadWriteLockAndReentrantLock {
         private List<String> synchronizedArrayList = Collections.synchronizedList(list);
 
         public void add(String ele) {
-            sleepTenMills();
+            sleepOneMills();
             synchronizedArrayList.add(ele);
         }
 
         public String get(int index) {
-            sleepTenMills();
+            sleepOneMills();
             return synchronizedArrayList.get(index);
         }
 
@@ -61,7 +64,7 @@ public class TestReentrantReadWriteLockAndReentrantLock {
         private Lock writeLock = reentrantReadWriteLock.writeLock();
 
         public void add(String ele) {
-            sleepTenMills();
+            sleepOneMills();
             writeLock.lock();
             try {
                 list.add(ele);
@@ -71,7 +74,7 @@ public class TestReentrantReadWriteLockAndReentrantLock {
         }
 
         public String get(int index) {
-            sleepTenMills();
+            sleepOneMills();
             readLock.lock();
             try {
                 return list.get(index);
@@ -100,7 +103,7 @@ public class TestReentrantReadWriteLockAndReentrantLock {
         private ReentrantLock lock = new ReentrantLock();
 
         public void add(String ele) {
-            sleepTenMills();
+            sleepOneMills();
             lock.lock();
             try {
                 list.add(ele);
@@ -110,7 +113,7 @@ public class TestReentrantReadWriteLockAndReentrantLock {
         }
 
         public String get(int index) {
-            sleepTenMills();
+            sleepOneMills();
             lock.lock();
             try {
                 return list.get(index);
@@ -129,9 +132,9 @@ public class TestReentrantReadWriteLockAndReentrantLock {
 
     }
 
-    public static void sleepTenMills() {
+    public static void sleepOneMills() {
         try {
-            TimeUnit.MILLISECONDS.sleep(10);
+            TimeUnit.MILLISECONDS.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
