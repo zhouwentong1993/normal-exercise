@@ -4,6 +4,8 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.concurrent.CountDownLatch;
+
 public class SingleThreadTest {
     public static JedisPool pool;
 
@@ -22,29 +24,31 @@ public class SingleThreadTest {
     }
 
     public static void main(String[] args) {
-        Thread[] threads = new Thread[2000];
+
+        CountDownLatch countDownLatch = new CountDownLatch(1000);
+
+        Thread[] threads = new Thread[1000];
         for (int i = 0; i < 1000; i++) {
-            Jedis resource = pool.getResource();
+            Jedis jedis = pool.getResource();
             threads[i] = new Thread(() -> {
-                resource.incr("testIncr1");
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jedis.incr("test");
+                jedis.close();
             });
             threads[i].start();
-            resource.close();
         }
 
-//        for (int i = 1000; i < 2000; i++) {
-//            threads[i] = new Thread(() -> {
-//                Long current = Long.valueOf(jedis.get("testIncr"));
-//                current = current + 1;
-//                jedis.set("testIncr", String.valueOf(current));
-//            });
-//            threads[i].start();
-//        }
+        for (int i = 0; i < 1000; i++) {
+
+        }
+
 
         while (Thread.activeCount() > 1) {
             Thread.yield();
         }
-//        System.out.println(jedis.get("testIncr"));
-//        jedis.close();
     }
 }

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * test for lockSupport
@@ -82,6 +83,12 @@ public class TestLockSupport {
     @Test
     public void testParkWithThis() {
         LockSupport.park(this);
+    }
+
+    @Test(expected = IllegalMonitorStateException.class)
+    public void testUnLockWhenNoLock() {
+        ReentrantLock reentrantLock = new ReentrantLock();
+        reentrantLock.unlock();
     }
 
 }
