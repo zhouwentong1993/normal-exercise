@@ -481,7 +481,7 @@ public class HashMap<K,V>
         }
 
         modCount++;
-        addEntry(hash, key, value, i);
+        addEn   try(hash, key, value, i);
         return null;
     }
 

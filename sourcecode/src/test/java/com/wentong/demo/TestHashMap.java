@@ -17,6 +17,12 @@ public class TestHashMap {
     }
 
     @Test
+    public void testConstruct() {
+        Map<String, String> map = new HashMap<>();
+        System.out.println(map);
+    }
+
+    @Test
     public void testMapResizeTreeMap() throws Exception {
         TimeUnit.SECONDS.sleep(10);
         Map<Integer, Foo> map = new HashMap<>(1);

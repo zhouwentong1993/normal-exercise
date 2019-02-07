@@ -606,7 +606,6 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
         // 当 table 中有元素 && table
         if ((tab = table) != null && (n = tab.length) > 0 &&
-                // todo 这句什么意思，不懂 TODO，这样是取到第一个节点吗
 //                https://stackoverflow.com/questions/27230938/why-hashmap-insert-new-node-on-index-n-1-hash
                 // 通过 hash 定位到数组中的具体元素，即为 first
             (first = tab[(n - 1) & hash]) != null) {
