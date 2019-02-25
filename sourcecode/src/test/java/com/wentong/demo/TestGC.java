@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 public class TestGC {
     public static void main(String[] args) throws Exception {
+        TimeUnit.SECONDS.sleep(30);
         System.out.println("ready to start");
-        TimeUnit.SECONDS.sleep(60);
         List<GCDataObject> list = new ArrayList<>();
         for (int i = 0; i < 51200; i++) {
             list.add(new GCDataObject(2));
@@ -16,6 +16,7 @@ public class TestGC {
         System.gc();
         list.size();
         list = null;
+        System.out.println("System.gc() 后");
         TimeUnit.SECONDS.sleep(5);
         List<GCDataObject> list1 = new ArrayList<>();
         for (int j = 0; j < 3200; j++) {
@@ -23,7 +24,7 @@ public class TestGC {
         }
         list1.size();
         list1 = null;
-        TimeUnit.SECONDS.sleep(1000);
+        TimeUnit.SECONDS.sleep(10);
 
     }
 
