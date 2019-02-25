@@ -29,6 +29,7 @@
       <module name="netty" target="1.8" />
       <module name="redis" target="1.8" />
       <module name="redisson" target="1.5" />
+      <module name="scala" target="1.5" />
       <module name="sourcecode" target="1.8" />
     </bytecodeTargetLevel>
   </component>
