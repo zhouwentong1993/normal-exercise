@@ -1222,6 +1222,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @Override
     public V computeIfAbsent(K key,
                              Function<? super K, ? extends V> mappingFunction) {
+        // 有两种解决方案。1.等到用到的时候自然就会抛出空指针异常。2.显示声明这个异常。两种方案各有利弊
+        // 显示声明会给用户明显的提示，但是代码会冗余。
         if (mappingFunction == null)
             throw new NullPointerException();
         int hash = hash(key);
