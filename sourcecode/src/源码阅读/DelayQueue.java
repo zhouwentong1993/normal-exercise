@@ -40,6 +40,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.*;
 
 /**
+ * 带有延时功能的阻塞队列，元素只能在其过期的时候被移除。第一个元素是离现在时间最近的
+ * 如果没有要到期的元素，poll 会返回 null。当 getDelay 方法返回比当前时间早或者正好是当前时间的
+ *
  * An unbounded {@linkplain BlockingQueue blocking queue} of
  * {@code Delayed} elements, in which an element can only be taken
  * when its delay has expired.  The <em>head</em> of the queue is that
@@ -69,6 +72,7 @@ import java.util.*;
  */
 
 // DelayQueue 是一个无界延时队列吗？为什么不设计成有界的？
+    // 应该是因为 PriorityQueue 是一个无界队列
 public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
     implements BlockingQueue<E> {
 
@@ -155,7 +159,10 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
             // 优先级队列和延时队列，也可以这样理解，延时队列相当于优先级队列的扩展，也是符合了 extends（扩展）这个词的意思。
             q.offer(e);
             // 注意！！优先级队列不按照存入顺序，所以有可能 q.peek() != e
-            // todo 但是为什么要这么做？？？
+            // Q:todo 但是为什么要这么做？？？
+            // A:优先级队列采用最小堆方式存储，队列里实际存储元素的是数组，数组存储顺序和插入顺序无关
+            // 判断这个是看这个值是否为最小值.
+            // 当插入最小值是，意味着出现了过期的可能性了。
             if (q.peek() == e) {
                 // 当 leader 为空时，唤醒等待线程。
                 leader = null;
@@ -209,9 +216,13 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
             E first = q.peek();
             // todo 这里的逻辑有点儿看不懂，当 first != null 时，直接将元素取出，不用比较时间吗
             // 关键点肯定是在 PriorityQueue 里面。
+            // 回答：当时不应该看不懂啊，这里运用了逻辑短路的一些东西
+            // 当走到 else 时，肯定 if 两个条件都是 false 才行。也就是 first != null && first.getDelay() <= 0
+            // 这样也就满足了延时队列的要求了
             if (first == null || first.getDelay(NANOSECONDS) > 0)
                 return null;
             else
+                // 这个方法是非阻塞的
                 return q.poll();
         } finally {
             lock.unlock();
@@ -241,10 +252,13 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                     // time is ok
                     if (delay <= 0)
                         return q.poll();
+                    // 引用置为 null，不会把优先队列置为 null，只是为了节省开支而已。
                     first = null; // don't retain ref while waiting
+                    // todo 为什么不跟后面一样，等具体的时间呢？
                     if (leader != null)
                         available.await();
                     else {
+                        // 如果没有 leader，就将当前线程置为 leader。
                         Thread thisThread = Thread.currentThread();
                         leader = thisThread;
                         try {
@@ -292,6 +306,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                     if (nanos <= 0)
                         return null;
                     first = null; // don't retain ref while waiting
+                    // 等待最小时间
                     if (nanos < delay || leader != null)
                         nanos = available.awaitNanos(nanos);
                     else {

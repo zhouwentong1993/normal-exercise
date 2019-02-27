@@ -92,6 +92,9 @@ public class TestDelayQueue {
             priorityQueue.add(String.valueOf(i));
         }
 
-        System.out.println(priorityQueue);
+        for (int i = 0; i < 100; i++) {
+            System.out.println(priorityQueue.poll());
+        }
+
     }
 }

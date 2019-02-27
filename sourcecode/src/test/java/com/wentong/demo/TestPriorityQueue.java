@@ -20,7 +20,9 @@ public class TestPriorityQueue {
         queue.add("f");
         queue.add("c");
         for (int i = 0; i < 6; i++) {
-            System.out.println(queue.poll());
+            String peek = queue.peek();
+            peek = null;
         }
+        System.out.println(queue);
     }
 }
