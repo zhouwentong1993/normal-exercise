@@ -9,6 +9,11 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * Benchmark                                Mode  Cnt         Score         Error  Units
+ * IntToStringBenchmark.testStringValueOf  thrpt   10  24289192.977 ± 1214276.725  ops/s
+ * IntToStringBenchmark.testUseAdd         thrpt   10  35486063.654 ± 1528481.209  ops/s
+ */
 public class IntToStringBenchmark {
 
     @Benchmark
