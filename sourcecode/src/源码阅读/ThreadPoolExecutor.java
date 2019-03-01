@@ -243,15 +243,17 @@ import java.util.*;
  * handler throws a runtime {@link RejectedExecutionException} upon
  * rejection. </li>
  *
- * 这个是由调用者自己去执行自己的任务
+ * 这个是由调用者自己去执行自己的任务，这提供了反馈机制，这样就能暂缓任务提交速率
  * <li> In {@link ThreadPoolExecutor.CallerRunsPolicy}, the thread
  * that invokes {@code execute} itself runs the task. This provides a
  * simple feedback control mechanism that will slow down the rate that
  * new tasks are submitted. </li>
  *
+ * 抛弃任务
  * <li> In {@link ThreadPoolExecutor.DiscardPolicy}, a task that
  * cannot be executed is simply dropped.  </li>
  *
+ * 这个是抛弃最老的任务，LRU 的方法实现。
  * <li>In {@link ThreadPoolExecutor.DiscardOldestPolicy}, if the
  * executor is not shut down, the task at the head of the work queue
  * is dropped, and then execution is retried (which can fail again,
@@ -259,13 +261,17 @@ import java.util.*;
  *
  * </ol>
  *
+ * 自定义 RejectedExecutionHandler 的时候，一定要注意这是在特殊情况下的操作，不要用这个 Handler 来代替正常流程。
  * It is possible to define and use other kinds of {@link
  * RejectedExecutionHandler} classes. Doing so requires some care
  * especially when policies are designed to work only under particular
  * capacity or queuing policies. </dd>
  *
  * <dt>Hook methods</dt>
+ * 钩子函数
  *
+ *
+ * 这里可以用来监控，采集状态，获取状态，加日志
  * <dd>This class provides {@code protected} overridable
  * {@link #beforeExecute(Thread, Runnable)} and
  * {@link #afterExecute(Runnable, Throwable)} methods that are called
@@ -276,11 +282,13 @@ import java.util.*;
  * any special processing that needs to be done once the Executor has
  * fully terminated.
  *
+ * 钩子函数如果抛异常了，那么其他的线程有可能终止（做监控的话，一定要注意了！！！）
  * <p>If hook or callback methods throw exceptions, internal worker
  * threads may in turn fail and abruptly terminate.</dd>
  *
  * <dt>Queue maintenance</dt>
  *
+ * 在运行期间，可以通过 getQueue 来操控队列，但是不建议这样做。
  * <dd>Method {@link #getQueue()} allows access to the work queue
  * for purposes of monitoring and debugging.  Use of this method for
  * any other purpose is strongly discouraged.  Two supplied methods,
@@ -290,6 +298,7 @@ import java.util.*;
  *
  * <dt>Finalization</dt>
  *
+ * 当系统检测到当前的线程池无用了，会自动调用 shutdown 方法。
  * <dd>A pool that is no longer referenced in a program <em>AND</em>
  * has no remaining threads will be {@code shutdown} automatically. If
  * you would like to ensure that unreferenced pools are reclaimed even
