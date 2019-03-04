@@ -502,6 +502,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * Set containing all worker threads in pool. Accessed only when
      * holding mainLock.
      */
+    // 工作线程，当拿到锁的时候才能运行。
     private final HashSet<Worker> workers = new HashSet<Worker>();
 
     /**
@@ -521,6 +522,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      */
     private long completedTaskCount;
 
+
+    // 所有用户指定的参数都被声明成 volatile 类型，因此 ongoing(前进)操作？？？
+    // 都能基于最新的值，
     /*
      * All user control parameters are declared as volatiles so that
      * ongoing actions are based on freshest values, but without need
@@ -558,6 +562,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * present or if allowCoreThreadTimeOut. Otherwise they wait
      * forever for new work.
      */
+    // 线程池是如何监控线程是否空闲的？
     private volatile long keepAliveTime;
 
     /**
@@ -565,6 +570,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * If true, core threads use keepAliveTime to time out waiting
      * for work.
      */
+    // core Thread 是否超时死亡。
     private volatile boolean allowCoreThreadTimeOut;
 
     /**
@@ -606,6 +612,21 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * and failure to actually interrupt will merely delay response to
      * configuration changes so is not handled exceptionally.
      */
+    // 看看有没有修改线程的权限，详见 RuntimePermission 类中关于 modifyThread 的介绍
+    /**
+     *  *
+     *  * <tr>
+     *  *   <td>modifyThread</td>
+     *  *   <td>Modification of threads, e.g., via calls to Thread
+     *  * <tt>interrupt</tt>, <tt>stop</tt>, <tt>suspend</tt>,
+     *  * <tt>resume</tt>, <tt>setDaemon</tt>, <tt>setPriority</tt>,
+     *  * <tt>setName</tt> and <tt>setUncaughtExceptionHandler</tt>
+     *  * methods</td>
+     *  * <td>This allows an attacker to modify the behaviour of
+     *  * any thread in the system.</td>
+     *  * </tr>
+      */
+
     private static final RuntimePermission shutdownPerm =
         new RuntimePermission("modifyThread");
 
@@ -614,9 +635,15 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * threads running tasks, along with other minor bookkeeping.
      * This class opportunistically extends AbstractQueuedSynchronizer
      * to simplify acquiring and releasing a lock surrounding each
-     * task execution.  This protects against interrupts that are
+     * task execution.
+     *
+     *
+     * This protects against interrupts that are
      * intended to wake up a worker thread waiting for a task from
-     * instead interrupting a task being run.  We implement a simple
+     * instead interrupting a task being run.
+     *
+     * 该锁是非重入锁，因为不希望 worker 当它们调用线程池的控制方法（比如 #setCorePoolSize）时，再次获取锁？？
+     * We implement a simple
      * non-reentrant mutual exclusion lock rather than use
      * ReentrantLock because we do not want worker tasks to be able to
      * reacquire the lock when they invoke pool control methods like
@@ -625,6 +652,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * state to a negative value, and clear it upon start (in
      * runWorker).
      */
+    // 工作者，
     private final class Worker
         extends AbstractQueuedSynchronizer
         implements Runnable
@@ -671,8 +699,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             if (compareAndSetState(0, 1)) {
                 setExclusiveOwnerThread(Thread.currentThread());
                 return true;
+            } else {
+                return false;
             }
-            return false;
         }
 
         protected boolean tryRelease(int unused) {
