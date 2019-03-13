@@ -47,6 +47,17 @@ public class ThreadPoolExecutorTest {
         TimeUnit.SECONDS.sleep(1000);
     }
 
+    @Test
+    public void testDeadLoopBreak() {
+        label:
+        for (; ; ) {
+            System.out.println("outer loop");
+            for (; ; ) {
+                break label;
+            }
+        }
+    }
+
     private void monitor(ThreadPoolExecutor threadPoolExecutor) {
         new Thread(() -> {
             int time = 0;
