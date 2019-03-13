@@ -1,5 +1,6 @@
 package com.wentong.demo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.junit.Test;
 import util.SleepUtil;
 
@@ -58,6 +59,27 @@ public class ThreadPoolExecutorTest {
         }
     }
 
+    @Test
+    public void testWorkerThreadDie() throws Exception {
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 200, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(5), new ThreadFactoryBuilder().setNameFormat("thread:%s").build());
+        for (int i = 0; i < 10; i++) {
+            threadPoolExecutor.execute(new Worker());
+        }
+        TimeUnit.SECONDS.sleep(1000);
+    }
+
+    @Test
+    public void testWhenThreadDie() {
+        Thread thread = new Thread(() -> {
+            SleepUtil.sleepOneSecond();
+            System.out.println("ok,I am over!");
+        });
+        thread.run();
+        SleepUtil.sleepSeconds(2);
+        thread.start();
+    }
+
+
     private void monitor(ThreadPoolExecutor threadPoolExecutor) {
         new Thread(() -> {
             int time = 0;
@@ -70,7 +92,7 @@ public class ThreadPoolExecutorTest {
                 System.out.println("maximumPoolSize:" + threadPoolExecutor.getMaximumPoolSize());
                 System.out.println();
                 System.out.println();
-                SleepUtil.SleepOneSecond();
+                SleepUtil.sleepOneSecond();
             }
         }).start();
     }
@@ -98,11 +120,11 @@ public class ThreadPoolExecutorTest {
         @Override
         public void run() {
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(Thread.currentThread().getName() + "haha");
+            System.out.println(Thread.currentThread().getName());
         }
     }
 

@@ -23,7 +23,7 @@ public class TestCPU100Percent {
 //
 //        new Thread(() -> {
 //            synchronized (o1) {
-//                SleepUtil.SleepOneSecond();
+//                SleepUtil.sleepOneSecond();
 //                synchronized (o2) {
 //
 //                }
@@ -32,7 +32,7 @@ public class TestCPU100Percent {
 //
 //        new Thread(() -> {
 //            synchronized (o2) {
-//                SleepUtil.SleepOneSecond();
+//                SleepUtil.sleepOneSecond();
 //                synchronized (o1) {
 //
 //                }
