@@ -1208,6 +1208,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * Main worker run loop.  Repeatedly gets tasks from queue and
      * executes them, while coping with a number of issues:
      *
+     * 通过不断地轮询队列来获取任务
      * 1. We may start out with an initial task, in which case we
      * don't need to get the first one. Otherwise, as long as pool is
      * running, we get tasks from getTask. If it returns null then the
@@ -1216,16 +1217,19 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * external code, in which case completedAbruptly holds, which
      * usually leads processWorkerExit to replace this thread.
      *
+     * 在运行任务之前，为防止当任务执行中被其他线程池中断，会加锁。保证除非池子停止，否则线程不会中断。
      * 2. Before running any task, the lock is acquired to prevent
      * other pool interrupts while the task is executing, and then we
      * ensure that unless pool is stopping, this thread does not have
      * its interrupt set.
      *
+     * 每一个任务都会先调用 beforeExecute 方法，如果抛异常了，会导致任务异常退出，所以一定要 catch 好了 Exception
      * 3. Each task run is preceded by a call to beforeExecute, which
      * might throw an exception, in which case we cause thread to die
      * (breaking loop with completedAbruptly true) without processing
      * the task.
      *
+     * 在 beforeExecute 里抛出的异常会在 afterExecute 里重新得到
      * 4. Assuming beforeExecute completes normally, we run the task,
      * gathering any of its thrown exceptions to send to afterExecute.
      * We separately handle RuntimeException, Error (both of which the
@@ -1270,6 +1274,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     beforeExecute(wt, task);
                     Throwable thrown = null;
                     try {
+                        // 执行的 run 方法！！！没有执行 start 方法。
                         task.run();
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
@@ -1499,6 +1504,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          *    当调用 addWorker() 方法时，会自动检验 runState 和 workerCount，
          */
         if (workerCountOf(c) < corePoolSize) {
+            // 增加一个 worker，也就是增加了一个线程。
             if (addWorker(command, true))
                 return;
             c = ctl.get();
@@ -1509,6 +1515,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             // 双重验证
             int recheck = ctl.get();
             // 如果任务没有运行，则从 queue 中移除任务
+            // 这种写法简洁，但是不太好阅读，后面一个函数在 if 语句中有副作用
             if (!isRunning(recheck) && remove(command))
                 reject(command);
             else if (workerCountOf(recheck) == 0)

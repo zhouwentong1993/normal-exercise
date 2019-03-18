@@ -60,11 +60,13 @@ public class ThreadPoolExecutorTest {
 
     @Test
     public void testWorkerThreadDie() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 200, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(5), new ThreadFactoryBuilder().setNameFormat("thread:%s").build());
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 200, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(5), new ThreadFactoryBuilder().setNameFormat("thread:%s").build());
         for (int i = 0; i < 10; i++) {
             threadPoolExecutor.execute(new Worker());
         }
-        TimeUnit.SECONDS.sleep(1000);
+
+        threadPoolExecutor.execute(new Worker());
+        TimeUnit.SECONDS.sleep(13);
     }
 
     @Test
