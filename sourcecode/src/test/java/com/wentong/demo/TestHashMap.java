@@ -118,9 +118,11 @@ public class TestHashMap {
 
     @Test
     public void testResize() throws Exception {
+        TimeUnit.SECONDS.sleep(100);
         Map<Foo1, String> map = new HashMap<>(4);
         Foo1 key = new Foo1(1);
         map.put(key, "1");
+
 
         Foo1 key1 = new Foo1(5);
         map.put(key1, "5");
