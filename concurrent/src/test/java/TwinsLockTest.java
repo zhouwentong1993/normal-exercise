@@ -1,4 +1,4 @@
-import com.finup.demo.TwinsLock;
+import com.wentong.demo.TwinsLock;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;

@@ -1,6 +1,6 @@
 package com.wentong.normal;
 
-import com.finup.demo.registration.RegistrationServerInfo;
+import com.wentong.demo.registration.RegistrationServerInfo;
 import org.junit.Test;
 
 import java.util.HashSet;
