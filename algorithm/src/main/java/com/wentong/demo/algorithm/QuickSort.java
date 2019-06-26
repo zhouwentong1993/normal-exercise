@@ -1,4 +1,4 @@
-package com.wentong.demo;
+package com.wentong.demo.algorithm;
 
 /**
  * 对数组快速排序

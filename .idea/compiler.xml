@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="algorithm" />
         <module name="concurrent" />
+        <module name="exercise" />
         <module name="javacore" />
         <module name="mq" />
         <module name="netty" />
@@ -22,6 +23,7 @@
       <module name="algorithm" target="1.8" />
       <module name="collection" target="1.8" />
       <module name="concurrent" target="1.8" />
+      <module name="exercise" target="1.8" />
       <module name="guava_main" target="1.8" />
       <module name="guava_test" target="1.8" />
       <module name="javacore" target="1.8" />

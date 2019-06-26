@@ -1,4 +1,4 @@
-package com.wentong.demo;
+package com.wentong.demo.algorithm;
 
 
 import org.junit.Test;

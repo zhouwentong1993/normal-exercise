@@ -1,9 +1,10 @@
-package com.wentong.demo;
+package com.wentong.demo.algorithm;
 
 /**
- * 多项式相加算法
+ * 多项式求解算法
+ * x 的多少次方
  */
-public class Polynomial {
+public class PolynomialSolve {
 
     public static void main(String[] args) {
         double[] as = new double[10];

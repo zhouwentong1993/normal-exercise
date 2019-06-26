@@ -1,4 +1,4 @@
-package com.wentong.demo;
+package com.wentong.demo.algorithm;
 
 /**
  * 警察抓了 A、B、C、D 四名罪犯，其中一名是小偷，审讯的时候：
