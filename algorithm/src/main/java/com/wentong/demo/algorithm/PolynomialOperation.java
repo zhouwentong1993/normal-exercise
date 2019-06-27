@@ -11,8 +11,13 @@ public class PolynomialOperation {
         int index; // 指数
         Polynomial next; // 下一个
 
-
+        boolean hasNext() {
+            return next != null;
+        }
     }
 
+    public static void main(String[] args) {
+
+    }
 
 }
