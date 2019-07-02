@@ -11,6 +11,7 @@
         <module name="concurrent" />
         <module name="exercise" />
         <module name="javacore" />
+        <module name="microservices" />
         <module name="mq" />
         <module name="netty" />
         <module name="rabbitmq" />
@@ -27,6 +28,7 @@
       <module name="guava_main" target="1.8" />
       <module name="guava_test" target="1.8" />
       <module name="javacore" target="1.8" />
+      <module name="microservices" target="1.8" />
       <module name="mq" target="1.8" />
       <module name="netty" target="1.8" />
       <module name="rabbitmq" target="1.8" />
@@ -38,6 +40,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
     </option>
   </component>

@@ -24,6 +24,7 @@
         <module>redis</module>
         <module>redisson</module>
         <module>sourcecode</module>
+        <module>microservices</module>
     </modules>
 
 </project>
