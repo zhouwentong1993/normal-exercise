@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="algorithm" />
         <module name="concurrent" />
-        <module name="exercise" />
         <module name="javacore" />
         <module name="microservices" />
         <module name="mq" />
@@ -18,6 +17,7 @@
         <module name="redis" />
         <module name="redisson" />
         <module name="sourcecode" />
+        <module name="zipkin-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
@@ -36,6 +36,7 @@
       <module name="redisson" target="1.5" />
       <module name="scala" target="1.5" />
       <module name="sourcecode" target="1.8" />
+      <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
