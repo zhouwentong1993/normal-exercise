@@ -10,9 +10,10 @@ import java.io.IOException;
 public class ReceiveLogs2 {
 
     public static void main(String[] args) throws Exception {
-        Channel channel = RabbitMqUtil.getChannelOfLocalhost();
+        Channel channel = RabbitMqUtil.fetchChannel();
         channel.exchangeDeclare("logs", "fanout");
-        String queueName = channel.queueDeclare().getQueue();
+        channel.queueDeclare("test_fanout2", true, false, false, null);
+        String queueName = "test_fanout2";
         channel.queueBind(queueName, "logs", "");
         System.out.println("Waiting for message");
         DefaultConsumer consumer = new DefaultConsumer(channel) {

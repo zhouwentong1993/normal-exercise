@@ -14,7 +14,7 @@ public final class RabbitMqUtil {
     static Channel channel = null;
     static Connection connection;
 
-    public static Channel getChannelOfLocalhost() {
+    public static Channel fetchChannel() {
         try {
             // 创建连接工厂
             ConnectionFactory connectionFactory = new ConnectionFactory();

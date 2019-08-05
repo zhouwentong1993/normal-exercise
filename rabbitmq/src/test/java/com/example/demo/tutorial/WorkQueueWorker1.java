@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class WorkQueueWorker1 {
 
     public static void main(String[] args) throws Exception{
-        Channel channel = RabbitMqUtil.getChannelOfLocalhost();
+        Channel channel = RabbitMqUtil.fetchChannel();
         channel.queueDeclare("task_queue", true, false, false, null);
         // 每次获取一个
         channel.basicQos(1);
