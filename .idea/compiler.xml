@@ -2,47 +2,38 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="algorithm" />
         <module name="concurrent" />
+        <module name="demo" />
         <module name="javacore" />
         <module name="microservices" />
         <module name="mq" />
         <module name="netty" />
-        <module name="rabbitmq" />
         <module name="redis" />
         <module name="redisson" />
+        <module name="slf4j-demo" />
         <module name="sourcecode" />
         <module name="zipkin-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="algorithm" target="1.8" />
-      <module name="collection" target="1.8" />
       <module name="concurrent" target="1.8" />
+      <module name="demo" target="1.8" />
       <module name="exercise" target="1.8" />
-      <module name="guava_main" target="1.8" />
-      <module name="guava_test" target="1.8" />
       <module name="javacore" target="1.8" />
       <module name="microservices" target="1.8" />
       <module name="mq" target="1.8" />
       <module name="netty" target="1.8" />
-      <module name="rabbitmq" target="1.8" />
       <module name="redis" target="1.8" />
       <module name="redisson" target="1.5" />
-      <module name="scala" target="1.5" />
+      <module name="slf4j-demo" target="1.8" />
       <module name="sourcecode" target="1.8" />
       <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="microservices" options="-parameters" />
-      <module name="rabbitmq" options="-parameters" />
-    </option>
   </component>
 </project>

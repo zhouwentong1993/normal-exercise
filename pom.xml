@@ -27,6 +27,7 @@
         <module>sourcecode</module>
         <module>microservices</module>
         <module>zipkinserver</module>
+        <module>slf4j-demo</module>
     </modules>
 
 </project>
