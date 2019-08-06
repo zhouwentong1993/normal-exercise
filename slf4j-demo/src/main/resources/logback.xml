@@ -12,7 +12,7 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
-        <file>log/output.log</file>
+        <file>/log/output.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>log/output.log.%i</fileNamePattern>
         </rollingPolicy>
@@ -21,8 +21,10 @@
         </triggeringPolicy>
     </appender>
 
+    <logger name="java"/>
+
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+        <!--<appender-ref ref="CONSOLE" />-->
         <appender-ref ref="FILE" />
     </root>
 </configuration>
