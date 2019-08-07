@@ -45,6 +45,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
+      <module name="spring" options="-parameters" />
     </option>
   </component>
 </project>
