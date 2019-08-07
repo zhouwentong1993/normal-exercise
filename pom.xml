@@ -28,6 +28,7 @@
         <module>microservices</module>
         <module>zipkinserver</module>
         <module>slf4j-demo</module>
+        <module>spring</module>
     </modules>
 
 </project>
