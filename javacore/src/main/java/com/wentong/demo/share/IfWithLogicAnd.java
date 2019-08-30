@@ -1,6 +1,10 @@
 package com.wentong.demo.share;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IfWithLogicAnd {
 
@@ -10,6 +14,20 @@ public class IfWithLogicAnd {
         if (action1() && action2() || action3()) {
 
         }
+    }
+
+    @Test
+    public void testGuavaNull() {
+        ImmutableList<Object> of = ImmutableList.of(null);
+        System.out.println(of);
+
+    }
+
+    @Test
+    public void testInt2Map() {
+        int i = 10;
+        List<Integer> list = new ArrayList<>();
+        list.add(i);
     }
 
     private boolean action1() {
