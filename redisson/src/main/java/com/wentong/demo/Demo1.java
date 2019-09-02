@@ -77,8 +77,12 @@ public class Demo1 {
             lock1.unlock();
             System.out.println("lock1 release lock!!!");
         }
+        RBlockingQueue<String> blockingFairQueue = redisson.getBlockingQueue("delay_queue");
 
-// todo delayed queue 功能
+        RDelayedQueue<String> delayedQueue = redisson.getDelayedQueue(blockingFairQueue);
+        delayedQueue.offer("msg1", 10, TimeUnit.SECONDS);
+        delayedQueue.offer("msg2", 1, TimeUnit.MINUTES);
+
         System.out.println(mymap.getName());
         System.out.println(redisson);
     }
