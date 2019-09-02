@@ -26,7 +26,6 @@
     <bytecodeTargetLevel target="1.8">
       <module name="algorithm" target="1.8" />
       <module name="concurrent" target="1.8" />
-      <module name="demo" target="1.8" />
       <module name="exercise" target="1.8" />
       <module name="javacore" target="1.8" />
       <module name="microservices" target="1.8" />
@@ -34,7 +33,7 @@
       <module name="netty" target="1.8" />
       <module name="rabbitmq" target="1.8" />
       <module name="redis" target="1.8" />
-      <module name="redisson" target="1.5" />
+      <module name="redisson" target="8" />
       <module name="slf4j-demo" target="1.8" />
       <module name="sourcecode" target="1.8" />
       <module name="spring" target="1.8" />
