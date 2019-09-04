@@ -33,7 +33,7 @@
       <module name="netty" target="1.8" />
       <module name="rabbitmq" target="1.8" />
       <module name="redis" target="1.8" />
-      <module name="redisson" target="8" />
+      <module name="redisson" target="1.8" />
       <module name="slf4j-demo" target="1.8" />
       <module name="sourcecode" target="1.8" />
       <module name="spring" target="1.8" />
@@ -44,6 +44,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
+      <module name="redisson" options="-parameters" />
       <module name="spring" options="-parameters" />
     </option>
   </component>
