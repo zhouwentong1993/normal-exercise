@@ -9,7 +9,7 @@ import org.redisson.config.TransportMode;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class LockDemo1 {
+public class RedisLockDemo1 {
     public static void main(String[] args) throws Exception {
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
