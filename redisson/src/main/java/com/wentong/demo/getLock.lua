@@ -1,9 +1,11 @@
+-- 获取锁的流程
+-- 如果不存在该 key，创建该 key，hset 结构，放入当前 UUID + 线程号
 if (redis.call('exists', KEYS[1]) == 0) then
     redis.call('hset', KEYS[1], ARGV[2], 1);
     redis.call('pexpire', KEYS[1], ARGV[1]);
     return nil;
 end ;
--- 可重入锁
+-- 可重入锁，还是当前线程的话，+1。
 if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then
     redis.call('hincrby', KEYS[1], ARGV[2], 1);
     redis.call('pexpire', KEYS[1], ARGV[1]);

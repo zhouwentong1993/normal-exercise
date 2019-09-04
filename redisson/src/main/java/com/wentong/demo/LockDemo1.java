@@ -16,21 +16,24 @@ public class LockDemo1 {
         config.useSingleServer().setAddress("http://127.0.0.1:6379");
         config.setExecutor(Executors.newFixedThreadPool(2000));
         // 指定分布式锁中未添加超时时间的情况，默认值
-        config.setLockWatchdogTimeout(30000);
+        config.setLockWatchdogTimeout(32000);
 
         RedissonClient redisson = Redisson.create(config);
         RLock testLock1 = redisson.getLock("testLock1");
         testLock1.lock();
-        new Thread(() -> {
-            RLock testLock11 = redisson.getLock("testLock1");
-            testLock11.lock();
-            try {
-
-            } finally {
-                testLock11.unlock();
-            }
-        }).start();
-        TimeUnit.SECONDS.sleep(40);
+//        new Thread(() -> {
+//            RLock testLock11 = redisson.getLock("testLock1");
+//            testLock11.lock();
+//            try {
+//
+//            } finally {
+//                testLock11.unlock();
+//            }
+//        }).start();
+        testLock1.lock();
+        testLock1.lock();
+        testLock1.lock();
+        TimeUnit.SECONDS.sleep(20);
         testLock1.unlock();
     }
 }
