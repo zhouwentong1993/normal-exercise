@@ -41,5 +41,13 @@ public class TestController {
             return "unGetLock";
         }
     }
+//    @NonNullFields
+//    public static String getName( List<String> list) {
+//        return list.get(0);
+//    }
+//
+//    public static void main(String[] args) {
+//        getName(null);
+//    }
 
 }
