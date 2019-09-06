@@ -1,4 +1,4 @@
-package com.finup.config;
+package com.wentong.config;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.serializer.support.DeserializingConverter;

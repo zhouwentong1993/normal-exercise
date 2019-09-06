@@ -1,4 +1,4 @@
-package com.finup.jedis;
+package com.wentong.jedis;
 
 public class TestRedisPipeLine {
 

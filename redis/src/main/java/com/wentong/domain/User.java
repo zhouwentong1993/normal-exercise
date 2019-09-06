@@ -1,4 +1,4 @@
-package com.finup.domain;
+package com.wentong.domain;
 
 import java.io.Serializable;
 

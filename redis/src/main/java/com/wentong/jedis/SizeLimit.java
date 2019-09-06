@@ -1,4 +1,4 @@
-package com.finup.jedis;
+package com.wentong.jedis;
 
 import org.junit.Test;
 import redis.clients.jedis.Jedis;

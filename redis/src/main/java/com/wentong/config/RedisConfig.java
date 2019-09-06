@@ -1,6 +1,6 @@
-package com.finup.config;
+package com.wentong.config;
 
-import com.finup.domain.User;
+import com.wentong.domain.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

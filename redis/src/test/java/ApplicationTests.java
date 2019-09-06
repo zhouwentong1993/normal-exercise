@@ -1,5 +1,5 @@
-import com.finup.Application;
-import com.finup.domain.User;
+import com.wentong.Application;
+import com.wentong.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
