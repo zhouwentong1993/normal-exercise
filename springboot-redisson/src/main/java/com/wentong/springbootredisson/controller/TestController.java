@@ -1,4 +1,4 @@
-package com.wentong.springbootredisson;
+package com.wentong.springbootredisson.controller;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -41,13 +41,5 @@ public class TestController {
             return "unGetLock";
         }
     }
-//    @NonNullFields
-//    public static String getName( List<String> list) {
-//        return list.get(0);
-//    }
-//
-//    public static void main(String[] args) {
-//        getName(null);
-//    }
 
 }
