@@ -1,14 +1,13 @@
 package com.wentong.springbootredisson.controller;
 
+import com.wentong.springbootredisson.aspect.DistributeLock;
+import com.wentong.springbootredisson.vo.User;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +23,9 @@ public class TestController {
         return "hello";
     }
 
-    @GetMapping("lock/{name}")
-    public String getLock(@PathVariable String name) throws Exception {
+    @PostMapping("lock/{name}")
+    @DistributeLock(lockUniqueKey = "#user.userId",lockPrefix = "testLock")
+    public String getLock(@PathVariable String name, @RequestBody User user) throws Exception {
         RLock lock = redissonClient.getLock(name);
         boolean b = lock.tryLock(5,TimeUnit.SECONDS);
         if (b) {

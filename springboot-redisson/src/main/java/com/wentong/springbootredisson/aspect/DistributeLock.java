@@ -7,7 +7,9 @@ import java.lang.annotation.*;
 @Documented
 public @interface DistributeLock {
 
-    String lockUniqueKey() default "";// redis 锁key的前缀
+    String lockUniqueKey() default "";// 锁的关键字
+
+    String lockPrefix() default ""; // 锁的前缀
 
     long timeOut() default 1000;// 轮询锁的时间
 
