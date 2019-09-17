@@ -23,7 +23,7 @@ public class TestController {
     }
 
     @PostMapping("lock/{name}")
-    @DistributeLock(lockUniqueKey = "#user.userId",lockPrefix = "testLock")
+    @DistributeLock(lockUniqueKey = "#user.userId",lockPrefix = "testLock",timeOut = 10,expireTime = 5)
     public String getLock(@PathVariable String name, @RequestBody User user) throws Exception {
         LOGGER.info("getLock");
         TimeUnit.SECONDS.sleep(1);

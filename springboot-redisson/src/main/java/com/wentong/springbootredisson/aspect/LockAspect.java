@@ -41,6 +41,7 @@ public class LockAspect {
         String uniqueKey = distributeLock.lockUniqueKey();
         int expireTime = distributeLock.expireTime();
         long timeOut = distributeLock.timeOut();
+        String prefix = distributeLock.lockPrefix();
 
         Object[] args = jp.getArgs();
         String[] params = discoverer.getParameterNames(method);
@@ -50,7 +51,7 @@ public class LockAspect {
         }
         Expression expression = spelExpressionParser.parseExpression(uniqueKey);
         Object value = expression.getValue(context);
-        String lockKey = uniqueKey + value;
+        String lockKey = prefix + value;
         RLock lock = redissonClient.getLock(lockKey);
         boolean locked = lock.tryLock(timeOut, expireTime, TimeUnit.SECONDS);
         if (locked) {
@@ -62,7 +63,8 @@ public class LockAspect {
             }
         } else {
             LOGGER.info("Thread:{} can't get lock,key is:{}", Thread.currentThread().getName(), lockKey);
-            throw new IllegalStateException();
+            return null;
+//            throw new IllegalStateException();
         }
     }
 }

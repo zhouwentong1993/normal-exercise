@@ -23,6 +23,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://" + host + ":" + port);
+        config.setLockWatchdogTimeout(30000);
         return Redisson.create(config);
     }
 
