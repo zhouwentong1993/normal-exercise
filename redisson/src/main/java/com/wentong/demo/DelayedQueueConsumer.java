@@ -8,6 +8,7 @@ import org.redisson.config.Config;
 import org.redisson.config.TransportMode;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class DelayedQueueConsumer {
     public static void main(String[] args) throws Exception{
@@ -22,9 +23,28 @@ public class DelayedQueueConsumer {
         RBlockingQueue<String> blockingFairQueue = redisson.getBlockingQueue("delay_queue");
 
         RDelayedQueue<String> delayedQueue = redisson.getDelayedQueue(blockingFairQueue);
+        delayedQueue.offer("helloworld00", 10, TimeUnit.SECONDS);
+        delayedQueue.offer("helloworld01", 20, TimeUnit.SECONDS);
+        count();
         while (true) {
             String take = blockingFairQueue.take();
             System.out.println(take);
         }
+    }
+
+    private static void count() {
+        new Thread(() -> {
+            int i = 0;
+            for (; ; ) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                i ++;
+                System.out.println("now is: " + i);
+            }
+
+        }).start();
     }
 }
