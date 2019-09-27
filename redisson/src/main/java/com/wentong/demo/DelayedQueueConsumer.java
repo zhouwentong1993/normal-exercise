@@ -23,8 +23,8 @@ public class DelayedQueueConsumer {
         RBlockingQueue<String> blockingFairQueue = redisson.getBlockingQueue("delay_queue");
 
         RDelayedQueue<String> delayedQueue = redisson.getDelayedQueue(blockingFairQueue);
-        delayedQueue.offer("helloworld00", 10, TimeUnit.SECONDS);
-        delayedQueue.offer("helloworld01", 20, TimeUnit.SECONDS);
+        delayedQueue.offer("helloworld00", 10, TimeUnit.MINUTES);
+        delayedQueue.offer("helloworld01", 20, TimeUnit.MINUTES);
         count();
         while (true) {
             String take = blockingFairQueue.take();
