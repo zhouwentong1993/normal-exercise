@@ -10,6 +10,7 @@
         <module name="algorithm" />
         <module name="concurrent" />
         <module name="demo" />
+        <module name="druid-demo" />
         <module name="javacore" />
         <module name="microservices" />
         <module name="mq" />
@@ -27,6 +28,7 @@
     <bytecodeTargetLevel target="1.8">
       <module name="algorithm" target="1.8" />
       <module name="concurrent" target="1.8" />
+      <module name="druid-demo" target="1.8" />
       <module name="exercise" target="1.8" />
       <module name="javacore" target="1.8" />
       <module name="microservices" target="1.8" />
@@ -44,6 +46,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="druid-demo" options="-parameters" />
       <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
       <module name="redisson" options="-parameters" />
