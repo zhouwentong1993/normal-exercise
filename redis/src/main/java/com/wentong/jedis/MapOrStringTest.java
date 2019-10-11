@@ -20,8 +20,17 @@ public class MapOrStringTest {
             user.school = "school" + i;
             jedis.lpush("test1", JSONObject.toJSONString(user));
         }
-//        jedis.set("test", JSONObject.toJSONString(list));
-        System.out.println("ok");
+//        for (int i = 0; i < 10000; i++) {
+//            User user = new User();
+//            user.address = "address" + i;
+//            user.company = "company" + i;
+//            user.firstName = "firstName" + i;
+//            user.lastName = "lastName" + i;
+//            user.school = "school" + i;
+//            jedis.lpush("test1", JSONObject.toJSONString(user));
+//        }
+////        jedis.set("test", JSONObject.toJSONString(list));
+//        System.out.println("ok");
     }
 
 
