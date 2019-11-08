@@ -16,7 +16,7 @@ public class DelayedQueueConsumer {
         config.setTransportMode(TransportMode.NIO);
         config.useSingleServer().setAddress("http://127.0.0.1:6379");
         config.setExecutor(Executors.newFixedThreadPool(2000));
-        // 指定分布式锁中未添加超时时间的情况，默认值
+        // 指定分布式锁中未添加超时时间的情i况，默认值
         config.setLockWatchdogTimeout(30000);
 
         RedissonClient redisson = Redisson.create(config);
