@@ -30,6 +30,7 @@
         <module>slf4j-demo</module>
         <module>spring</module>
         <module>druid-demo</module>
+        <module>interview</module>
     </modules>
 
 </project>
