@@ -11,6 +11,7 @@
         <module name="concurrent" />
         <module name="demo" />
         <module name="druid-demo" />
+        <module name="interview" />
         <module name="javacore" />
         <module name="microservices" />
         <module name="mq" />
@@ -30,6 +31,7 @@
       <module name="concurrent" target="1.8" />
       <module name="druid-demo" target="1.8" />
       <module name="exercise" target="1.8" />
+      <module name="interview" target="1.8" />
       <module name="javacore" target="1.8" />
       <module name="microservices" target="1.8" />
       <module name="mq" target="1.8" />
