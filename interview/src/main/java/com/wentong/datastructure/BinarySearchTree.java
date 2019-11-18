@@ -56,10 +56,10 @@ public class BinarySearchTree {
             } else {
                 if (root.value <= insertNum) {
                     parent = root;
-                    root = root.left;
+                    root = root.right;
                 } else {
                     parent = root;
-                    root = root.right;
+                    root = root.left;
                 }
             }
         }
