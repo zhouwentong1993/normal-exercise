@@ -176,8 +176,8 @@ public class BinarySearchTree {
         }
     }
 
-    public static void printTree(Node root){
-        if(root == null)
+    public static void printTree(Node root) {
+        if (root == null)
             return;
         Queue<Node> queue = new LinkedList<>();
 
@@ -187,20 +187,20 @@ public class BinarySearchTree {
         queue.offer(root);
         current = 1;
         next = 0;
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Node currentNode = queue.poll();
             System.out.printf("%-4d", currentNode.value);
             current--;
 
-            if(currentNode.left != null){
+            if (currentNode.left != null) {
                 queue.offer(currentNode.left);
                 next++;
             }
-            if(currentNode.right != null){
+            if (currentNode.right != null) {
                 queue.offer(currentNode.right);
                 next++;
             }
-            if(current ==0){
+            if (current == 0) {
                 System.out.println();
                 current = next;
                 next = 0;
