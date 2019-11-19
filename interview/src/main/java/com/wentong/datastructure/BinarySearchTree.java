@@ -1,5 +1,7 @@
 package com.wentong.datastructure;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringJoiner;
 
 public class BinarySearchTree {
@@ -28,7 +30,7 @@ public class BinarySearchTree {
     public static void main(String[] args) {
         Node root = new Node(new Node(new Node(null, null, 3), null, 4), new Node(null, null, 6), 5);
         insert(root, 10);
-        printNode(root);
+        printTree(root);
         Node delete = delete(root, 10);
 //        int search = search(root, 199);
 //        System.out.println(search);
@@ -150,5 +152,61 @@ public class BinarySearchTree {
     private static void printSomething(String someThing) {
         System.out.print(someThing);
     }
+
+
+    // 层次遍历
+    private void levelIterator(Node root) {
+        if (root == null) {
+            return;
+        }
+        LinkedList<Node> queue = new LinkedList<>();
+        Node current;
+        queue.offer(root);//将根节点入队
+        while (!queue.isEmpty()) {
+            current = queue.poll();//出队队头元素并访问
+            System.out.print(current.value + "-->");
+            if (current.left != null)//如果当前节点的左节点不为空入队
+            {
+                queue.offer(current.left);
+            }
+            if (current.right != null)//如果当前节点的右节点不为空，把右节点入队
+            {
+                queue.offer(current.right);
+            }
+        }
+    }
+
+    public static void printTree(Node root){
+        if(root == null)
+            return;
+        Queue<Node> queue = new LinkedList<>();
+
+        int current;//当前层 还未打印的结点个数
+        int next;//下一层结点个数
+
+        queue.offer(root);
+        current = 1;
+        next = 0;
+        while(!queue.isEmpty()){
+            Node currentNode = queue.poll();
+            System.out.printf("%-4d", currentNode.value);
+            current--;
+
+            if(currentNode.left != null){
+                queue.offer(currentNode.left);
+                next++;
+            }
+            if(currentNode.right != null){
+                queue.offer(currentNode.right);
+                next++;
+            }
+            if(current ==0){
+                System.out.println();
+                current = next;
+                next = 0;
+            }
+        }
+    }
+
 
 }
