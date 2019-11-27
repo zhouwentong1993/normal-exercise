@@ -1,28 +1,13 @@
 package com.wentong.concurrent;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
-// time: 247
-//10000000
+public class SynAndCas1 {
 
-//time: 1276
-//100000000
-public class SynAndCas {
-
-    private static int count = 0;
+    private static AtomicInteger count = new AtomicInteger(0);
     private static void incr() {
-        synchronized (SynAndCas.class) {
-            count++;
-//            try {
-//                TimeUnit.MILLISECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            if (count == 10000 * 10000) {
-//                System.out.println("time: " + (System.currentTimeMillis() - l));
-//                System.out.println(count);
-//            }
-        }
+        count.getAndIncrement();
     }
 
 
@@ -48,7 +33,7 @@ public class SynAndCas {
         }
         startLatch.countDown();
         endLatch.await();
-        System.out.println("count is: " + count);
+        System.out.println("count is:" + count.get());
         System.out.println("time is: " + (System.nanoTime() - l) );
     }
 }
