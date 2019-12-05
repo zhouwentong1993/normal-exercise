@@ -1,5 +1,6 @@
 package com.wentong.concurrent;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TrafficLimit {
 
     public static void main(String[] args) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         RateLimiter rateLimiter = RateLimiter.create(5);
         System.out.println(rateLimiter.acquire(10));
         System.out.println(rateLimiter.acquire());
@@ -23,7 +25,8 @@ public class TrafficLimit {
         System.out.println(rateLimiter.acquire());
         System.out.println(rateLimiter.acquire());
         System.out.println(rateLimiter.acquire());
-
+        stopwatch.stop();
+        System.out.println(stopwatch);
     }
 
     private static void slidingWindowLimit() throws Exception {
