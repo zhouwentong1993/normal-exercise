@@ -107,7 +107,7 @@
                     </annotationProcessorPaths>
                     <annotationProcessors>
                         <!-- Add all the checkers you want to enable here -->
-                        <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+                        <!--<annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>-->
                     </annotationProcessors>
                     <compilerArgs>
                         <!-- using github.com/google/error-prone-javac is required when running on JDK 8 -->

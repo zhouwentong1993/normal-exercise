@@ -29,7 +29,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <option name="lint" value="" />
-        <processor name="org.checkerframework.checker.nullness.NullnessChecker" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/checkerframework/checker/3.0.1/checker-3.0.1.jar" />
         </processorPath>
