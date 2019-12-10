@@ -11,7 +11,6 @@
         <module name="concurrent" />
         <module name="demo" />
         <module name="druid-demo" />
-        <module name="interview" />
         <module name="javacore" />
         <module name="microservices" />
         <module name="mq" />
@@ -24,6 +23,17 @@
         <module name="spring" />
         <module name="springboot-redisson" />
         <module name="zipkin-server" />
+      </profile>
+      <profile name="Annotation profile for exercise" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="lint" value="" />
+        <processor name="org.checkerframework.checker.nullness.NullnessChecker" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/checkerframework/checker/3.0.1/checker-3.0.1.jar" />
+        </processorPath>
+        <module name="interview" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
@@ -49,6 +59,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="druid-demo" options="-parameters" />
+      <module name="interview" options="-Alint" />
       <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
       <module name="redisson" options="-parameters" />

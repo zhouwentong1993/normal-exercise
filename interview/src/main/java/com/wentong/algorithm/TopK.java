@@ -28,8 +28,9 @@ public class TopK {
             queue.offer(num);
             return num;
         } else {
-            if (queue.peek() < num) {
-                int min = queue.poll();
+            Integer peek = queue.peek();
+            if (peek != null && peek < num) {
+                Integer min = queue.poll();
                 queue.offer(num);
                 return min;
             } else {

@@ -1,5 +1,7 @@
 package com.wentong.concurrent;
 
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -12,7 +14,7 @@ public class UnsafeTest {
         // 需要通过反射获取
         Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
         theUnsafe.setAccessible(true);
-        Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+        @NonNull @UnknownInitialization Unsafe unsafe = (Unsafe) theUnsafe.get(null);
 
         // 线程相关
         Thread thread = new Thread(() -> {
