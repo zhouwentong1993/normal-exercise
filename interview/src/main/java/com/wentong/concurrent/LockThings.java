@@ -44,8 +44,4 @@ public class LockThings {
         // 这里要将 ticket 置为下一个，这样下一个 ticket 就能获取到锁了。
         serviceNum.compareAndSet(ticket, ticket + 1);
     }
-
-
-
-
 }
