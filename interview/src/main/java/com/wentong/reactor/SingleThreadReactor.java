@@ -57,10 +57,6 @@ public class SingleThreadReactor implements Runnable{
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(1 << 2);
-    }
-
     class Handler implements Runnable {
         private SocketChannel socketChannel;
         private SelectionKey selectionKey;
