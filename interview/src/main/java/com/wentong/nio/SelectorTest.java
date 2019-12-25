@@ -7,6 +7,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
+// Selector 的基本用法
 public class SelectorTest {
     public static void main(String[] args) throws Exception {
         try (Selector selector = Selector.open();
@@ -14,6 +15,7 @@ public class SelectorTest {
             socketChannel.bind(new InetSocketAddress(9090));
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
+            // 这个方法是阻塞的，直到有连接建立或者 wakeup 调用或者线程中断。
             int count = selector.select();
             if (count > 0) {
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
