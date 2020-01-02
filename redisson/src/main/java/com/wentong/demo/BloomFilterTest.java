@@ -13,12 +13,12 @@ public class BloomFilterTest {
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
         config.useClusterServers()
-                .addNodeAddress("http://127.0.0.1:7000")
-                .addNodeAddress("http://127.0.0.1:7001")
-                .addNodeAddress("http://127.0.0.1:7002")
-                .addNodeAddress("http://127.0.0.1:7003")
-                .addNodeAddress("http://127.0.0.1:7004")
-                .addNodeAddress("http://127.0.0.1:7005");
+                .addNodeAddress("redis://127.0.0.1:7000")
+                .addNodeAddress("redis://127.0.0.1:7001")
+                .addNodeAddress("redis://127.0.0.1:7002")
+                .addNodeAddress("redis://127.0.0.1:7003")
+                .addNodeAddress("redis://127.0.0.1:7004")
+                .addNodeAddress("redis://127.0.0.1:7005");
 
         config.setExecutor(Executors.newFixedThreadPool(2000));
         // 指定分布式锁中未添加超时时间的情况，默认值
