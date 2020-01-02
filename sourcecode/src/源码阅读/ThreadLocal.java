@@ -168,6 +168,7 @@ public class ThreadLocal<T> {
         Thread t = Thread.currentThread();
         ThreadLocalMap map = getMap(t);
         if (map != null) {
+            // 从 Map 里面获取，key 就是自身
             ThreadLocalMap.Entry e = map.getEntry(this);
             if (e != null) {
                 @SuppressWarnings("unchecked")
@@ -310,6 +311,7 @@ public class ThreadLocal<T> {
      * used, stale entries are guaranteed to be removed only when
      * the table starts running out of space.
      */
+    // 定制的 HashMap 结构，就为了这种情景下使的。
     static class ThreadLocalMap {
 
         /**
@@ -601,6 +603,9 @@ public class ThreadLocal<T> {
          * (all between staleSlot and this slot will have been checked
          * for expunging).
          */
+        // 这个方法会移除 null key，因为 Key 是 WeakReference，所以有可能被 GC 掉。
+        // 因此，ThreadLocal 在 get/set/remove 这几个方法上增加了这个调用。
+        // 目的就是移除无用的元素
         private int expungeStaleEntry(int staleSlot) {
             Entry[] tab = table;
             int len = tab.length;
