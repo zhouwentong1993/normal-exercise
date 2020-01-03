@@ -428,6 +428,7 @@ public class ThreadLocal<T> {
          * @param  key the thread local object
          * @return the entry associated with key, or null if no such
          */
+        // 当调用 get 方法时，会进行清理工作
         private Entry getEntry(ThreadLocal<?> key) {
             int i = key.threadLocalHashCode & (table.length - 1);
             Entry e = table[i];
@@ -452,11 +453,14 @@ public class ThreadLocal<T> {
 
             while (e != null) {
                 ThreadLocal<?> k = e.get();
+                // 在 get 方法上不会成立
                 if (k == key)
                     return e;
                 if (k == null)
+                    // 清除陈旧条目
                     expungeStaleEntry(i);
                 else
+                    // 往后遍历
                     i = nextIndex(i, len);
                 e = tab[i];
             }
