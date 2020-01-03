@@ -75,7 +75,7 @@ import java.util.function.Supplier;
 /**
  * todo
  * 1. 我看文章里面说的是当调用 get、set、remove 等方法时，会清除 Map 里面 key 为 null 的值
- * 2. ThreadLocal 一个线程只能有值，为什么还要设计成 Map 的样子，这样也不会存成多个。
+ * 2. ThreadLocal 一个线程只能有一个值，为什么还要设计成 Map 的样子，这样也不会存成多个。
  * @param <T>
  */
 public class ThreadLocal<T> {
@@ -324,6 +324,7 @@ public class ThreadLocal<T> {
          */
         static class Entry extends WeakReference<ThreadLocal<?>> {
             /** The value associated with this ThreadLocal. */
+            // 实际存储的值
             Object value;
 
             Entry(ThreadLocal<?> k, Object v) {
