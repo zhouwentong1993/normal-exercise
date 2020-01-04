@@ -29,9 +29,10 @@ public class NettyServer {
                 nioSocketChannel.pipeline().addLast(new StringDecoder());
                 nioSocketChannel.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                     @Override
-                    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) {
-                        System.out.println(s);
+                    protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
+
                     }
+
                 });
             }
         });
@@ -51,7 +52,6 @@ public class NettyServer {
             }
         });
     }
-
 
 
 }

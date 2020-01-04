@@ -48,7 +48,7 @@ public class NettyClient {
                     System.err.println("第 " + order + "连接失败，正在重试 …");
                     // 采用指数避让
                     int wait = 1 << order;
-                    bootstrap.config().group().schedule(() -> connect(bootstrap,retryLimit - 1), wait, TimeUnit.SECONDS);
+                    bootstrap.group().schedule(() -> connect(bootstrap,retryLimit - 1), wait, TimeUnit.SECONDS);
                 } else {
                     System.err.println("连接 " + MAX_RETRY_COUNT + " 失败，连接结束");
                     throw new IllegalStateException("连接失败");
