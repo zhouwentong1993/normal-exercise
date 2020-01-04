@@ -1,4 +1,4 @@
-package websock;
+package netty.definitive.websocket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -50,20 +50,20 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         }
 
         String request = ((TextWebSocketFrame) frame).text();
-        System.out.println("收到 websocket 请求：" + request);
+        System.out.println("收到 netty.definitive.websocket 请求：" + request);
 
         ctx.channel().write(new TextWebSocketFrame("请求：" + request + "响应：" + new Date().toString()));
 
     }
 
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
-        // 如果不是 websocket 头，返回 BadRequest。
-        if (!request.decoderResult().isSuccess() || !Objects.equals(request.headers().get("Upgrade"), "websocket")) {
+        // 如果不是 netty.definitive.websocket 头，返回 BadRequest。
+        if (!request.decoderResult().isSuccess() || !Objects.equals(request.headers().get("Upgrade"), "netty/definitive/websocket")) {
             sendHttpResponse(ctx, request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;
         }
         WebSocketServerHandshakerFactory handShakerFactory =
-                new WebSocketServerHandshakerFactory("ws://localhost:9999/websocket", null, false);
+                new WebSocketServerHandshakerFactory("ws://localhost:9999/netty.definitive.websocket", null, false);
         handshaker = handShakerFactory.newHandshaker(request);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());

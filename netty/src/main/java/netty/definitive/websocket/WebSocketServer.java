@@ -1,4 +1,4 @@
-package websock;
+package netty.definitive.websocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
