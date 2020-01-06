@@ -10,7 +10,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println(msg);
-        UserInfo[] userInfo = (UserInfo[]) msg;
+        UserInfo userInfo = (UserInfo) msg;
         System.out.println("This is " + ++counter + " times receive client: [" + userInfo + "]");
         // 后置的也行吗？？
 //        body += "$_";

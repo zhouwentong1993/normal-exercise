@@ -14,6 +14,6 @@ public class MsgpackDecoder extends MessageToMessageDecoder<ByteBuf> {
         byte[] bytes = new byte[length];
         msg.getBytes(msg.readerIndex(), bytes, 0, length);
         MessagePack messagePack = new MessagePack();
-        out.add(messagePack.read(bytes, UserInfo[].class));
+        out.add(messagePack.read(bytes, UserInfo.class));
     }
 }

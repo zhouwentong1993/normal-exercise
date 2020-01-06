@@ -11,11 +11,11 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("EchoClientHandler.channelActive");
         UserInfo[] allUsers = getAllUsers();
-//        for (UserInfo user : allUsers) {
-//            ctx.write(user);
-//        }
-//        ctx.flush();
-        ctx.writeAndFlush(allUsers);
+        for (UserInfo user : allUsers) {
+            ctx.write(user);
+        }
+        ctx.flush();
+//        ctx.writeAndFlush(allUsers);
     }
 
     @Override
