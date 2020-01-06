@@ -11,11 +11,12 @@ public class TimeClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf byteBuf = (ByteBuf) msg;
-        byte[] bytes = new byte[byteBuf.readableBytes()];
-        byteBuf.readBytes(bytes);
-        String time = new String(bytes);
-        System.out.println("now is " + time + " count is " + ++counter);
+        String body = (String) msg;
+//        ByteBuf byteBuf = (ByteBuf) msg;
+//        byte[] bytes = new byte[byteBuf.readableBytes()];
+//        byteBuf.readBytes(bytes);
+//        String time = new String(bytes);
+        System.out.println("now is " + body + " count is " + ++counter);
     }
 
     @Override
