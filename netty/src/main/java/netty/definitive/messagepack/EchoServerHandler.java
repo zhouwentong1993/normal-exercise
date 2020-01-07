@@ -9,12 +9,18 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("EchoServerHandler.channelRead");
         System.out.println(msg);
         UserInfo userInfo = (UserInfo) msg;
         System.out.println("This is " + ++counter + " times receive client: [" + userInfo + "]");
         // 后置的也行吗？？
 //        body += "$_";
         ctx.writeAndFlush(userInfo);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("EchoServerHandler.channelReadComplete");
     }
 
     @Override
