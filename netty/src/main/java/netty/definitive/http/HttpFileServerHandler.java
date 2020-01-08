@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.channels.FileChannel;
 import java.util.regex.Pattern;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -65,8 +64,6 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
         } else if (file.isFile()) {
             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
             long length = randomAccessFile.length();
-            FileChannel channel = randomAccessFile.getChannel();
-            ByteBuf buffer = Unpooled.buffer();
             HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, OK);
             setContentLength(httpResponse, length);
             setContentTypeHeader(httpResponse, file);
