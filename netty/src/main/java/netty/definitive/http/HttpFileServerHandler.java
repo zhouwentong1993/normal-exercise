@@ -1,5 +1,6 @@
 package netty.definitive.http;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
 import java.util.regex.Pattern;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -34,6 +36,9 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
             return;
         }
         String uri = request.uri();
+        if (uri.equals("/favicon.ico")) {
+            return;
+        }
         String path = sanitizeUri(uri);
         if (StringUtils.isBlank(path)) {
             sendError(ctx, FORBIDDEN);
@@ -44,37 +49,50 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
             sendError(ctx, NOT_FOUND);
             return;
         }
-        if (!file.isFile()) {
-            sendError(ctx, FORBIDDEN);
-            return;
-        }
-        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-        long length = randomAccessFile.length();
-        HttpResponse httpResponse = new DefaultHttpResponse(HttpVersion.HTTP_1_1, OK);
-        setContentLength(httpResponse, length);
-        setContentTypeHeader(httpResponse, file);
-        if (isKeepAlive(request)) {
-            httpResponse.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        }
-        ctx.write(httpResponse);
-        ChannelFuture channelFuture = ctx.write(new ChunkedFile(randomAccessFile, 0, length, 8192), ctx.newProgressivePromise());
-        channelFuture.addListener(new ChannelProgressiveFutureListener() {
-
-            @Override
-            public void operationComplete(ChannelProgressiveFuture future) throws Exception {
-                System.out.println("HttpFileServerHandler.operationComplete");
+        if (file.isDirectory()) {
+            String[] list = file.list();
+            StringBuilder builder = new StringBuilder();
+            for (String fileName : list) {
+                builder.append("<a href='").append(uri).append("/").append(fileName).append("'>").append(fileName).append("</a><br>");
             }
+            ByteBuf buf = Unpooled.copiedBuffer(builder.toString(), CharsetUtil.UTF_8);
+            HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, OK, buf);
+            setContentLength(httpResponse, buf.readableBytes());
+            if (isKeepAlive(request)) {
+                httpResponse.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            }
+            ctx.write(httpResponse);
+        } else if (file.isFile()) {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+            long length = randomAccessFile.length();
+            FileChannel channel = randomAccessFile.getChannel();
+            ByteBuf buffer = Unpooled.buffer();
+            HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, OK);
+            setContentLength(httpResponse, length);
+            setContentTypeHeader(httpResponse, file);
+            if (isKeepAlive(request)) {
+                httpResponse.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            }
+            ctx.write(httpResponse);
+            ChannelFuture channelFuture = ctx.write(new ChunkedFile(randomAccessFile, 0, length, 8192), ctx.newProgressivePromise());
+            channelFuture.addListener(new ChannelProgressiveFutureListener() {
 
-            @Override
-            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) throws Exception {
-                if (total < 0) { // total unknown
-                    System.err.println("Transfer progress: " + progress);
-                } else {
-                    System.err.println("Transfer progress: " + progress + " / "
-                            + total);
+                @Override
+                public void operationComplete(ChannelProgressiveFuture future) throws Exception {
+                    System.out.println("HttpFileServerHandler.operationComplete");
                 }
-            }
-        });
+
+                @Override
+                public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) throws Exception {
+                    if (total < 0) { // total unknown
+                        System.err.println("Transfer progress: " + progress);
+                    } else {
+                        System.err.println("Transfer progress: " + progress + " / "
+                                + total);
+                    }
+                }
+            });
+        }
         ChannelFuture lastContentFuture = ctx
                 .writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         if (!isKeepAlive(request)) {
@@ -101,7 +119,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
                 throw new Error();
             }
         }
-        if (!uri.startsWith("/src/com/wentong")) {
+        if (!uri.startsWith("/src")) {
             return null;
         }
         if (!uri.startsWith("/")) {
@@ -113,7 +131,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
                 || uri.endsWith(".") || INSECURE_URI.matcher(uri).matches()) {
             return null;
         }
-        return System.getProperty("user.dir") + File.separator + uri;
+        return System.getProperty("user.dir") + "/netty" + uri;
     }
 
     private void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
