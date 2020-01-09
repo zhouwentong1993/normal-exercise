@@ -21,6 +21,7 @@ public class NettyMessageEncoder extends MessageToMessageEncoder<NettyMessage> {
         sendBuffer.writeLong(msg.getHeader().getSessionId());
         sendBuffer.writeByte(msg.getHeader().getType());
         sendBuffer.writeByte(msg.getHeader().getPriority());
+        sendBuffer.writeInt(msg.getHeader().getAttachment().size());
 
         for (Map.Entry<String, Object> param : msg.getHeader().getAttachment().entrySet()) {
             String key = param.getKey();
