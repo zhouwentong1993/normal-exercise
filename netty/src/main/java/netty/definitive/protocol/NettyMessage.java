@@ -2,10 +2,14 @@ package netty.definitive.protocol;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import java.io.Serializable;
+
 /**
  * 自定义协议信息
  */
-public class NettyMessage {
+public class NettyMessage implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Header header;
     private Object body;
