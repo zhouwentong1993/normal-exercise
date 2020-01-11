@@ -39,7 +39,7 @@
       <module name="algorithm" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="demo" target="1.8" />
-      <module name="druid-demo" target="1.8" />
+      <module name="druid-demo" target="1.5" />
       <module name="exercise" target="1.8" />
       <module name="interview" target="1.8" />
       <module name="javacore" target="1.8" />

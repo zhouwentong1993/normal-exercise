@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class Header {
 
-    private int crcCode; // 校验码，类似于 Java 的 Magic Number
+    private int crcCode = 0xcafebabe; // 校验码，类似于 Java 的 Magic Number
     private int length; // 消息头长度
     private long sessionId; // 请求唯一 id
     private byte type; // 业务类型
