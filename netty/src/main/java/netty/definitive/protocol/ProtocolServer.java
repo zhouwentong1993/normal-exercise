@@ -22,7 +22,6 @@ public class ProtocolServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
-                            ch.pipeline().addLast(new LoginAuthRequestHandler());
                             ch.pipeline().addLast(new LoginAuthResponseHandler());
                         }
                     });

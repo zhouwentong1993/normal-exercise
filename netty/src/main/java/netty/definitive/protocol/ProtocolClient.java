@@ -21,8 +21,7 @@ public class ProtocolClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                         ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
-                        ch.pipeline().addLast(new LoginAuthResponseHandler());
-                        ch.pipeline().addLast(new LoginAuthResponseHandler());
+                        ch.pipeline().addLast(new LoginAuthRequestHandler());
                     }
                 });
         ChannelFuture channelFuture = bootstrap.connect("localhost", 9090).sync();

@@ -2,12 +2,15 @@ package netty.definitive.protocol;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * 自定义协议 header 部分，长度不固定
  */
-public class Header {
+public class Header implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int crcCode = 0xcafebabe; // 校验码，类似于 Java 的 Magic Number
     private int length; // 消息头长度
