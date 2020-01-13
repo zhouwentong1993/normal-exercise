@@ -22,6 +22,7 @@ public class ProtocolClient {
                         ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                         ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
                         ch.pipeline().addLast(new LoginAuthRequestHandler());
+                        ch.pipeline().addLast(new HeartBeatRequestHandler());
                     }
                 });
         ChannelFuture channelFuture = bootstrap.connect("localhost", 9090).sync();

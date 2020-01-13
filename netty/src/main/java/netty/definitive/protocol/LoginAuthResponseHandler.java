@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static netty.definitive.protocol.consant.Constant.UNKNOWN_REQUEST;
-
 public class LoginAuthResponseHandler extends ChannelHandlerAdapter {
 
     private Map<String, Boolean> loginCheck = new ConcurrentHashMap<>();
@@ -39,9 +37,9 @@ public class LoginAuthResponseHandler extends ChannelHandlerAdapter {
                     System.out.println("client:" + localAddress + "登录");
                 }
             }
-            // 其他请求暂时拦截
+            // 其他请求放行，让其它的 handler 处理
         } else {
-            ctx.writeAndFlush(buildResponse(UNKNOWN_REQUEST, -1));
+            ctx.fireChannelRead(msg);
         }
     }
 
@@ -63,9 +61,9 @@ public class LoginAuthResponseHandler extends ChannelHandlerAdapter {
         Objects.requireNonNull(host);
         for (String whiteIp : WHITE_LIST) {
             if (host.equals(whiteIp)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

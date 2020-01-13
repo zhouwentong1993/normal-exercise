@@ -23,6 +23,7 @@ public class ProtocolServer {
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
                             ch.pipeline().addLast(new LoginAuthResponseHandler());
+                            ch.pipeline().addLast(new HeartBeatResponseHandler());
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(9090).sync();
