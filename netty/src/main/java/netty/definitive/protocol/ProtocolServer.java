@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import netty.definitive.protocol.codec.MarshallingCodeCFactory;
 
 public class ProtocolServer {
@@ -22,6 +23,8 @@ public class ProtocolServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                             ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
+                            // 增加超时配置
+                            ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(30));
                             ch.pipeline().addLast(new LoginAuthResponseHandler());
                             ch.pipeline().addLast(new HeartBeatResponseHandler());
                         }
