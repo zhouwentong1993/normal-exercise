@@ -23,7 +23,6 @@
         <module name="sourcecode" />
         <module name="spring" />
         <module name="springboot-redisson" />
-        <module name="zipkin-server" />
       </profile>
       <profile name="Annotation profile for exercise" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
