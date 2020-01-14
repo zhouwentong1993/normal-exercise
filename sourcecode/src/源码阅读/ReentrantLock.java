@@ -29,7 +29,7 @@
  *
  *
  * Written by Doug Lea with assistance from members of JCP JSR-166
- * Expert Group and released to the public com.finup.domain, as explained at
+ * Expert Group and released to the public com.wentong.domain, as explained at
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
 

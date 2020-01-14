@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.finup</groupId>
+    <groupId>com.wentong</groupId>
     <artifactId>exercise</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
@@ -31,6 +31,7 @@
         <module>spring</module>
         <module>druid-demo</module>
         <module>interview</module>
+        <module>hystrix</module>
     </modules>
 
 </project>
