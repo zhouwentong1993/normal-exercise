@@ -5,6 +5,8 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import rx.Observable;
 import rx.Observer;
 
+import java.util.concurrent.Future;
+
 public class HelloWorld extends HystrixCommand<String> {
 
     private String name;
@@ -14,8 +16,15 @@ public class HelloWorld extends HystrixCommand<String> {
         this.name = name;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         HelloWorld helloWorld = new HelloWorld("你好");
+//        String result = helloWorld.execute();
+//        System.out.println(result);
+        Future<String> future = helloWorld.queue();
+        String s = future.get();
+        System.out.println(s);
+
+
         Observable<String> observe = helloWorld.observe();
         observe.subscribe(new Observer<String>() {
             @Override
