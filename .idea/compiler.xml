@@ -60,6 +60,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="druid-demo" options="-parameters" />
+      <module name="hystrix" options="-parameters" />
       <module name="interview" options="-Alint" />
       <module name="microservices" options="-parameters" />
       <module name="rabbitmq" options="-parameters" />
