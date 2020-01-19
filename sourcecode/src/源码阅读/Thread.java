@@ -714,6 +714,7 @@ class Thread implements Runnable {
 
         boolean started = false;
         try {
+            // 核心实现，具体分析见：印象笔记中的面试准备/Java Thread 底层实现
             start0();
             started = true;
         } finally {
