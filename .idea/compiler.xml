@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="algorithm" />
+        <module name="aviator" />
         <module name="concurrent" />
         <module name="demo" />
         <module name="druid-demo" />
@@ -37,6 +38,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="algorithm" target="1.8" />
+      <module name="aviator" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="druid-demo" target="1.8" />

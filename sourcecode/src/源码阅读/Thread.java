@@ -715,6 +715,8 @@ class Thread implements Runnable {
         boolean started = false;
         try {
             // 核心实现，具体分析见：印象笔记中的面试准备/Java Thread 底层实现
+            // 这里没有跟 run 方法相关的东西，那么怎么调用到 run 方法的呢？
+//            https://www.jianshu.com/p/71290d20b4ff
             start0();
             started = true;
         } finally {
