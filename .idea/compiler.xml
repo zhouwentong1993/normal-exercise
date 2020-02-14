@@ -22,6 +22,7 @@
         <module name="redisson" />
         <module name="slf4j-demo" />
         <module name="sourcecode" />
+        <module name="spock" />
         <module name="spring" />
         <module name="springboot-redisson" />
       </profile>
@@ -54,6 +55,7 @@
       <module name="redisson" target="1.8" />
       <module name="slf4j-demo" target="1.8" />
       <module name="sourcecode" target="1.8" />
+      <module name="spock" target="1.8" />
       <module name="spring" target="1.8" />
       <module name="springboot-redisson" target="1.8" />
       <module name="zipkin-server" target="1.8" />

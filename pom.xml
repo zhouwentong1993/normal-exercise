@@ -33,6 +33,7 @@
         <module>interview</module>
         <module>hystrix</module>
         <module>aviator</module>
+        <module>spock</module>
     </modules>
 
 </project>
