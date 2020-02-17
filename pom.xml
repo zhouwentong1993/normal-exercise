@@ -26,7 +26,6 @@
         <module>redisson</module>
         <module>sourcecode</module>
         <module>microservices</module>
-        <module>zipkinserver</module>
         <module>slf4j-demo</module>
         <module>spring</module>
         <module>druid-demo</module>
@@ -34,6 +33,7 @@
         <module>hystrix</module>
         <module>aviator</module>
         <module>spock</module>
+        <module>spring-cache</module>
     </modules>
 
 </project>
