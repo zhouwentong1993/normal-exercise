@@ -9,13 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="druid-demo" />
         <module name="concurrent" />
+        <module name="admin-client" />
         <module name="sourcecode" />
         <module name="redis" />
         <module name="demo" />
-        <module name="springboot-admin" />
         <module name="netty" />
         <module name="spring" />
         <module name="springboot-redisson" />
+        <module name="admin-server" />
         <module name="javacore" />
         <module name="spring-cache" />
         <module name="hystrix" />
@@ -42,6 +43,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
+      <module name="admin-client" target="1.8" />
+      <module name="admin-server" target="1.8" />
       <module name="algorithm" target="1.8" />
       <module name="aviator" target="1.8" />
       <module name="caching" target="1.8" />
@@ -70,6 +73,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin-client" options="-parameters" />
+      <module name="admin-server" options="-parameters" />
       <module name="caching" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="druid-demo" options="-parameters" />

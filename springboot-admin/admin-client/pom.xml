@@ -2,38 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
+        <artifactId>springboot-admin</artifactId>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.0.RELEASE</version>
-        <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>springboot-admin</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>admin-server</module>
-        <module>admin-client</module>
-    </modules>
+    <artifactId>admin-client</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-server</artifactId>
-            <version>2.0.1</version>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>2.1.6</version>
         </dependency>
-
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
 
