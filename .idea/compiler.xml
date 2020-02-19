@@ -7,25 +7,28 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="algorithm" />
-        <module name="aviator" />
-        <module name="concurrent" />
-        <module name="demo" />
         <module name="druid-demo" />
-        <module name="hystrix" />
-        <module name="javacore" />
-        <module name="microservices" />
-        <module name="mq" />
-        <module name="netty" />
-        <module name="rabbitmq" />
-        <module name="redis" />
-        <module name="redisson" />
-        <module name="slf4j-demo" />
+        <module name="concurrent" />
         <module name="sourcecode" />
-        <module name="spock" />
+        <module name="redis" />
+        <module name="demo" />
+        <module name="springboot-admin" />
+        <module name="netty" />
         <module name="spring" />
-        <module name="spring-cache" />
         <module name="springboot-redisson" />
+        <module name="javacore" />
+        <module name="spring-cache" />
+        <module name="hystrix" />
+        <module name="slf4j-demo" />
+        <module name="rabbitmq" />
+        <module name="mq" />
+        <module name="microservices" />
+        <module name="aviator" />
+        <module name="redisson" />
+        <module name="algorithm" />
+        <module name="spock" />
+        <module name="caching" />
+        <module name="zipkin-server" />
       </profile>
       <profile name="Annotation profile for exercise" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -41,6 +44,7 @@
     <bytecodeTargetLevel target="1.8">
       <module name="algorithm" target="1.8" />
       <module name="aviator" target="1.8" />
+      <module name="caching" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="druid-demo" target="1.8" />
@@ -59,12 +63,15 @@
       <module name="spock" target="1.8" />
       <module name="spring" target="1.8" />
       <module name="spring-cache" target="1.8" />
+      <module name="springboot-admin" target="1.8" />
       <module name="springboot-redisson" target="1.8" />
       <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="caching" options="-parameters" />
+      <module name="demo" options="-parameters" />
       <module name="druid-demo" options="-parameters" />
       <module name="hystrix" options="-parameters" />
       <module name="interview" options="-Alint" />
@@ -73,6 +80,7 @@
       <module name="redisson" options="-parameters" />
       <module name="spring" options="-parameters" />
       <module name="spring-cache" options="-parameters" />
+      <module name="springboot-admin" options="-parameters" />
       <module name="springboot-redisson" options="-parameters" />
     </option>
   </component>
