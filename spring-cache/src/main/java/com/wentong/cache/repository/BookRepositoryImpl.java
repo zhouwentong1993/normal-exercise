@@ -9,20 +9,20 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class BookRepositoryImpl implements BookRepository {
     @Override
-    @Cacheable(value = "books",key = "#isbn")
-    public Book getByIsbn(String isbn) {
+    @Cacheable(value = "books")
+    public Book getByIsbn(Book book) {
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new Book(1L,isbn,"newTitle");
+        return new Book(1L, "book","newTitle");
     }
 
     @Override
-    @CacheEvict(value = "books",key = "#isbn")
-    public void update(String isbn) {
-
+    @CacheEvict(value = "books")
+    public void update(Book book) {
+        System.out.println("BookRepositoryImpl.update");
     }
 
 }

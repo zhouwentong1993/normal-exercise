@@ -2,8 +2,8 @@ package com.wentong.cache.repository;
 
 public interface BookRepository {
 
-    Book getByIsbn(String isbn);
+    Book getByIsbn(Book book);
 
-    void update(String isbn);
+    void update(Book book);
 
 }

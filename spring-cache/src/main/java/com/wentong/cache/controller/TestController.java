@@ -16,14 +16,14 @@ public class TestController {
     @GetMapping("get/{isbn}")
     public void getInfo(@PathVariable String isbn) {
         for (int i = 0; i < 2; i++) {
-            Book book = repository.getByIsbn(isbn + i);
+            Book book = repository.getByIsbn(new Book((long) i, isbn, "title"));
             System.out.println(book);
         }
     }
 
     @GetMapping("update/{isbn}")
     public void update(@PathVariable String isbn) {
-        repository.update(isbn);
+        repository.update(new Book(1L, isbn, "title"));
     }
 
 }
