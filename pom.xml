@@ -35,6 +35,7 @@
         <module>spock</module>
         <module>spring-cache</module>
         <module>springboot-admin</module>
+        <module>hutool</module>
     </modules>
 
 </project>
