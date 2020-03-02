@@ -55,7 +55,7 @@ public class Main {
                         }
                     });
                 }
-                if (currentPos != TICKS_PER_WHEEL) {
+                if (currentPos < TICKS_PER_WHEEL - 1) {
                     currentPos++;
                 } else {
                     currentPos = 0;
