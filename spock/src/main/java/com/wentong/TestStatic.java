@@ -6,4 +6,9 @@ public class TestStatic {
         return "source";
     }
 
+    private String mockPrivate() {
+        return "private";
+    }
+
+
 }

@@ -9,6 +9,7 @@ class TestStaticTest extends Specification {
         TestStatic.mockStatic() >> "haha"
         expect:
         println TestStatic.mockStatic()
+        println TestStatic.mockStatic()
 
     }
 }
