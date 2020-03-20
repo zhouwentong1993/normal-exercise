@@ -36,6 +36,7 @@
         <module>spring-cache</module>
         <module>springboot-admin</module>
         <module>hutool</module>
+        <module>guava</module>
     </modules>
 
 </project>

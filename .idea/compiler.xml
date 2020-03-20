@@ -14,15 +14,16 @@
         <module name="redis" />
         <module name="demo" />
         <module name="netty" />
-        <module name="rabbitmq" />
-        <module name="mq" />
+        <module name="spring" />
+        <module name="guava" />
+        <module name="springboot-redisson" />
         <module name="admin-server" />
         <module name="javacore" />
         <module name="spring-cache" />
         <module name="hystrix" />
         <module name="slf4j-demo" />
-        <module name="springboot-redisson" />
-        <module name="spring" />
+        <module name="rabbitmq" />
+        <module name="mq" />
         <module name="microservices" />
         <module name="aviator" />
         <module name="redisson" />
@@ -53,6 +54,7 @@
       <module name="demo" target="1.8" />
       <module name="druid-demo" target="1.8" />
       <module name="exercise" target="1.8" />
+      <module name="guava" target="1.8" />
       <module name="hutool" target="1.8" />
       <module name="hystrix" target="1.8" />
       <module name="interview" target="1.8" />
@@ -80,6 +82,7 @@
       <module name="caching" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="druid-demo" options="-parameters" />
+      <module name="guava" options="-parameters" />
       <module name="hystrix" options="-parameters" />
       <module name="interview" options="-Alint" />
       <module name="microservices" options="-parameters" />
