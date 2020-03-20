@@ -1,6 +1,5 @@
 package com.wentong.eventbus.demo;
 
-
 import com.wentong.eventbus.EventBus;
 
 import java.util.concurrent.Executors;
