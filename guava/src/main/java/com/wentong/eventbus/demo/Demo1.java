@@ -1,14 +1,14 @@
 package com.wentong.eventbus.demo;
 
-import com.wentong.eventbus.EventBus;
 
-import java.util.concurrent.Executors;
+import com.wentong.eventbus.EventBus;
 
 public class Demo1 {
 
     public static void main(String[] args) {
-        EventBus eventBus = new EventBus(Executors.newFixedThreadPool(10));
+        EventBus eventBus = new EventBus();
         eventBus.register(new Event1());
-        eventBus.post("Hello eventBus");
+        eventBus.register(new Event2());
+        eventBus.post(new BaseEvent1());
     }
 }

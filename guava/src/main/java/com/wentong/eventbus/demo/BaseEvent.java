@@ -1,4 +1,7 @@
 package com.wentong.eventbus.demo;
 
-public interface BaseEvent {
+public class BaseEvent {
+    void say(){
+        System.out.println("BaseEvent.say");
+    }
 }

@@ -43,7 +43,7 @@ public class ObserverRegistry {
         Set<Class<?>> classes = registry.keySet();
         Class<?> parameterType = object.getClass();
         for (Class<?> aClass : classes) {
-            if (parameterType.isAssignableFrom(aClass)) {
+            if (aClass.isAssignableFrom(parameterType)) {
                 list.addAll(registry.get(aClass));
             }
         }
