@@ -61,6 +61,12 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>fr.ujm.tse.lt2c.satin</groupId>
+            <artifactId>cachesize</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
     </dependencies>
 
 
