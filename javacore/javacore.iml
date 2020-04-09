@@ -38,5 +38,7 @@
     <orderEntry type="library" name="Maven: ru.concerteza.util:ctz-utils:2.26" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openjdk.jol:jol-core:0.10" level="project" />
   </component>
 </module>
