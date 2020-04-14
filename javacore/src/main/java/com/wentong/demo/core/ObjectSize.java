@@ -10,7 +10,7 @@ public class ObjectSize {
 
     public static void main(String[] args) throws Exception {
         System.out.println(VM.current().details());
-        System.out.println(ClassLayout.parseClass(A.class).toPrintable());
+        System.out.println(ClassLayout.parseClass(JHSDBTest2.class).toPrintable());
     }
 
 
