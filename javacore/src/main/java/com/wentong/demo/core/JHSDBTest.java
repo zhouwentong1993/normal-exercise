@@ -12,6 +12,10 @@ public class JHSDBTest {
         void foo() {
             ObjectHolder objectHolder = new ObjectHolder();
             System.out.println("done");
+            // 调用一次 hashCode 方法
+            int i = objectHolder.hashCode();
+            System.out.println(i);
+
         }
 
     }
