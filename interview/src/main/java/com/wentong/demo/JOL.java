@@ -49,10 +49,27 @@ import org.openjdk.jol.info.ClassLayout;
  * Instance size: 32 bytes
  * Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
  */
+
+/*
+com.wentong.demo.Foo object internals:
+ OFFSET  SIZE               TYPE DESCRIPTION                               VALUE
+      0    12                    (object header)                           N/A
+     12     4                int Foo.a                                     N/A
+     16     8             double Foo.b                                     N/A
+     24     8               long Foo.e                                     N/A
+     32     4              float Foo.h                                     N/A
+     36     2              short Foo.c                                     N/A
+     38     1            boolean Foo.f                                     N/A
+     39     1               byte Foo.g                                     N/A
+     40     4   java.lang.Object Foo.d                                     N/A
+     44     4                    (loss due to the next object alignment)
+Instance size: 48 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+ */
 public class JOL {
     public static void main(String[] args) {
-        System.out.println(ClassLayout.parseClass(String.class).toPrintable());
-        System.out.println(ClassLayout.parseClass(Animal.class).toPrintable());
+//        System.out.println(ClassLayout.parseClass(String.class).toPrintable());
+        System.out.println(ClassLayout.parseClass(Foo.class).toPrintable());
     }
 }
 
@@ -60,4 +77,15 @@ class Animal {
     int age;
     int[] a;
 //    Object object;
+}
+
+class Foo {
+    double b;
+    int a;
+    short c;
+    Object d;
+    long e;
+    boolean f;
+    byte g;
+    float h;
 }
