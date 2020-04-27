@@ -37,6 +37,7 @@
         <module>springboot-admin</module>
         <module>hutool</module>
         <module>guava</module>
+        <module>asm</module>
     </modules>
 
 </project>
