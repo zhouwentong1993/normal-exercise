@@ -11,22 +11,23 @@
         <module name="concurrent" />
         <module name="admin-client" />
         <module name="sourcecode" />
-        <module name="mq" />
+        <module name="aviator" />
         <module name="redis" />
         <module name="demo" />
+        <module name="small-dependency" />
         <module name="asm" />
-        <module name="netty" />
-        <module name="rabbitmq" />
+        <module name="spring" />
         <module name="guava" />
+        <module name="springboot-redisson" />
         <module name="admin-server" />
         <module name="javacore" />
         <module name="spring-cache" />
         <module name="hystrix" />
         <module name="slf4j-demo" />
-        <module name="springboot-redisson" />
-        <module name="spring" />
+        <module name="rabbitmq" />
+        <module name="mq" />
         <module name="microservices" />
-        <module name="aviator" />
+        <module name="netty" />
         <module name="redisson" />
         <module name="algorithm" />
         <module name="spock" />
@@ -68,6 +69,7 @@
       <module name="redis" target="1.8" />
       <module name="redisson" target="1.8" />
       <module name="slf4j-demo" target="1.8" />
+      <module name="small-dependency" target="1.8" />
       <module name="sourcecode" target="1.8" />
       <module name="spock" target="1.8" />
       <module name="spring" target="1.8" />

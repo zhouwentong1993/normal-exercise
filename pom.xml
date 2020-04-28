@@ -38,6 +38,7 @@
         <module>hutool</module>
         <module>guava</module>
         <module>asm</module>
+        <module>small-dependency</module>
     </modules>
 
 </project>
