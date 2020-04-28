@@ -1,4 +1,4 @@
-package com.wentong;
+package com.wentong.demo;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;

@@ -6,7 +6,7 @@ import org.objectweb.asm.*;
 
 import java.io.FileInputStream;
 
-import static org.objectweb.asm.Opcodes.ASM5;
+import static org.objectweb.asm.Opcodes.*;
 
 /*
     动态地给类加字段和方法
@@ -30,6 +30,16 @@ public class ASMDemo2 {
             }
 
             @Override
+            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+                // 移除 get 方法，在调用 visitEnd 方法时再添加一个 get，并修改原始行为
+                if (name.equals("get")) {
+                    return null;
+                } else {
+                    return super.visitMethod(access, name, descriptor, signature, exceptions);
+                }
+            }
+
+            @Override
             public void visitEnd() {
                 super.visitEnd();
                 // ① 要用 this
@@ -42,9 +52,20 @@ public class ASMDemo2 {
                 if (method != null) {
                     method.visitEnd();
                 }
+                MethodVisitor getMethodVisitor = this.visitMethod(ACC_PUBLIC, "get1", "(I)I", null, null);
+                if (getMethodVisitor != null) {
+                    getMethodVisitor.visitCode();
+                    getMethodVisitor.visitVarInsn(ILOAD, 1);
+                    getMethodVisitor.visitVarInsn(BIPUSH,100);
+                    getMethodVisitor.visitInsn(IADD);
+                    getMethodVisitor.visitInsn(IRETURN);
+                    // 触发计算
+                    getMethodVisitor.visitMaxs(0, 0);
+                    getMethodVisitor.visitEnd();
+                }
             }
         };
-        classReader.accept(classVisitor, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG);
+        classReader.accept(classVisitor, 0);
         byte[] bytes1 = classWriter.toByteArray();
         FileUtil.writeBytes(bytes1, "/Users/finup123/IdeaProjects/exercise/asm/src/main/java/com/wentong/demo/Target1.class");
     }
