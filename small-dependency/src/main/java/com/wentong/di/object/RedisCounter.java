@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class RedisCounter {
     private String host;
-    private int port;
+    private Integer port;
 }
