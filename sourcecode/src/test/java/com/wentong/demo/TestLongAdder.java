@@ -1,5 +1,6 @@
 package com.wentong.demo;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -8,7 +9,20 @@ import java.util.concurrent.atomic.LongAdder;
 public class TestLongAdder {
 
     public static void main(String[] args) throws Exception{
-        atomicLong();
+//        atomicLong();
+        LongAdder longAdder = new LongAdder();
+        longAdder.add(1);
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < 10; i++) {
+            Thread thread = new Thread(() -> {
+                int i1 = ThreadLocalRandom.current().nextInt();
+                System.out.println(Thread.currentThread().getName() + ":" + i1);
+            });
+            thread.setName("thread" + i);
+            threads[i] = thread;
+            thread.start();
+        }
+        TimeUnit.SECONDS.sleep(10);
     }
 
     private static void atomicLong() throws InterruptedException {

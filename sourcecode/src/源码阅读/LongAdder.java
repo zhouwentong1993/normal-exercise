@@ -37,13 +37,18 @@ package java.util.concurrent.atomic;
 import java.io.Serializable;
 
 /**
+ * 多个变量共同维护了整体的状态
  * One or more variables that together maintain an initially zero
- * {@code long} sum.  When updates (method {@link #add}) are contended
+ * {@code long} sum.
+ *
+ * 为什么要分成多个 term，主要是为了减少多线程争用情况下等待问题
+ * When updates (method {@link #add}) are contended
  * across threads, the set of variables may grow dynamically to reduce
  * contention. Method {@link #sum} (or, equivalently, {@link
  * #longValue}) returns the current total combined across the
  * variables maintaining the sum.
  *
+ * 论性能的话，LongAdder 要明显优于 AtomicLong 的
  * <p>This class is usually preferable to {@link AtomicLong} when
  * multiple threads update a common sum that is used for purposes such
  * as collecting statistics, not for fine-grained synchronization
@@ -83,6 +88,7 @@ public class LongAdder extends Striped64 implements Serializable {
      */
     public void add(long x) {
         Cell[] as; long b, v; int m; Cell a;
+        // 如果竞争失败了。
         if ((as = cells) != null || !casBase(b = base, b + x)) {
             boolean uncontended = true;
             if (as == null || (m = as.length - 1) < 0 ||

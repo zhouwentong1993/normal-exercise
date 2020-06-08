@@ -52,6 +52,8 @@ abstract class Striped64 extends Number {
      * Nearly all declarations in this class are package-private,
      * accessed directly by subclasses.
      *
+     * 写了为什么要加 Padding，Atomic 变量通常不需要加 Padding，因为他们在内存中
+     * 比较分散，不会相互影响对方。但是在数组条件下就会了。
      * Table entries are of class Cell; a variant of AtomicLong padded
      * (via @sun.misc.Contended) to reduce cache contention. Padding
      * is overkill for most Atomics because they are usually
@@ -61,6 +63,10 @@ abstract class Striped64 extends Number {
      * often share cache lines (with a huge negative performance
      * impact) without this precaution.
      *
+     * 因为 Cell 对象还是比较重的，所以尽量避免直接初始化，采用了懒加载的模式，
+     * 当没有竞争时，计数任务都放到了主对象的 base 字段上。一旦出现了竞争，即当
+     * CAS 失败时，Cell 数组就会初始化为 2，随着竞争的加强，会不断地变为 2 的倍数
+     * 直到小于或等于机器的 CPU 核数的最小的 2 的倍数。
      * In part because Cells are relatively large, we avoid creating
      * them until they are needed.  When there is no contention, all
      * updates are made to the base field.  Upon first contention (a
@@ -70,6 +76,7 @@ abstract class Striped64 extends Number {
      * number of CPUS. Table slots remain empty (null) until they are
      * needed.
      *
+     * 自旋锁的作用
      * A single spinlock ("cellsBusy") is used for initializing and
      * resizing the table, as well as populating slots with new Cells.
      * There is no need for a blocking lock; when the lock is not
@@ -117,6 +124,7 @@ abstract class Striped64 extends Number {
      * JVM intrinsics note: It would be possible to use a release-only
      * form of CAS here, if it were provided.
      */
+    // Cell 对象方法很简单，内部保留了 volatile 的 value，用于计数用。通过 UNSAFE 提供了 cas 算法。
     @sun.misc.Contended static final class Cell {
         volatile long value;
         Cell(long x) { value = x; }
@@ -211,6 +219,7 @@ abstract class Striped64 extends Number {
      * avoids the need for an extra field or function in LongAdder).
      * @param wasUncontended false if CAS failed before call
      */
+    // ！！！核心方法
     final void longAccumulate(long x, LongBinaryOperator fn,
                               boolean wasUncontended) {
         int h;
@@ -403,6 +412,7 @@ abstract class Striped64 extends Number {
             CELLSBUSY = UNSAFE.objectFieldOffset
                 (sk.getDeclaredField("cellsBusy"));
             Class<?> tk = Thread.class;
+            // ThreadLocal RandomValue
             PROBE = UNSAFE.objectFieldOffset
                 (tk.getDeclaredField("threadLocalRandomProbe"));
         } catch (Exception e) {
