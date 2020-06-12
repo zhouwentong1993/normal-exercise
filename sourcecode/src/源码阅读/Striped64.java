@@ -231,7 +231,9 @@ abstract class Striped64 extends Number {
         boolean collide = false;                // True if last slot nonempty
         for (;;) {
             Cell[] as; Cell a; int n; long v;
+            // 已经初始化过 cells，代表已经发生过冲突了
             if ((as = cells) != null && (n = as.length) > 0) {
+                // 这个 cell 没有过冲突
                 if ((a = as[(n - 1) & h]) == null) {
                     if (cellsBusy == 0) {       // Try to attach new Cell
                         Cell r = new Cell(x);   // Optimistically create
