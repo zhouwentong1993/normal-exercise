@@ -39,6 +39,7 @@
         <module>guava</module>
         <module>asm</module>
         <module>small-dependency</module>
+        <module>es</module>
     </modules>
 
 </project>
