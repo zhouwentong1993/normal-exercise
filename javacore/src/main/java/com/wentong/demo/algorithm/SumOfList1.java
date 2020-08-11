@@ -1,5 +1,7 @@
 package com.wentong.demo.algorithm;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 public class SumOfList1 {
@@ -13,9 +15,43 @@ public class SumOfList1 {
         listNode.next.next.next.next.next.next = new ListNode(9);
         listNode.next.next.next.next.next.next.next = new ListNode(9);
         listNode.next.next.next.next.next.next.next.next = new ListNode(9);
-        listNode.next.next.next.next.next.next.next.next.next =  new ListNode(9);
+        listNode.next.next.next.next.next.next.next.next.next = new ListNode(9);
         ListNode listNode1 = new ListNode(7);
         new SumOfList1().addTwoNumbers(listNode, listNode1);
+    }
+
+    public ListNode addTwoNumbers2(ListNode l1, ListNode l2) {
+        Deque<Integer> stack1 = new ArrayDeque<>();
+        Deque<Integer> stack2 = new ArrayDeque<>();
+        while (l1 != null || l2 != null) {
+            if (l1 != null) {
+                stack1.push(l1.val);
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                stack2.push(l2.val);
+                l2 = l2.next;
+            }
+        }
+        int carry = 0;
+        ListNode head = null;
+        while (!stack1.isEmpty() || !stack2.isEmpty()) {
+            int s1;
+            int s2;
+            s1 = stack1.isEmpty() ? 0 : stack1.pop();
+            s2 = stack2.isEmpty() ? 0 : stack2.pop();
+            int sum = s1 + s2 + carry;
+            ListNode listNode = new ListNode(sum % 10);
+            carry = sum / 10;
+            listNode.next = head;
+            head = listNode;
+        }
+        if (carry > 0) {
+            ListNode listNode = new ListNode(1);
+            listNode.next = head;
+            head = listNode;
+        }
+        return head;
     }
 
     // 这个方法不适用于数量太多的情况。
