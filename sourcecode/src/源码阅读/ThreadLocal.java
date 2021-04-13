@@ -44,14 +44,16 @@ import java.util.function.Supplier;
  * <pre>
  * import java.util.concurrent.atomic.AtomicInteger;
  *
+ * // 可以通过这种方式实现每一个线程独立的计数器
+ * // update 不对，下面的代码为每一个线程生成了独立的线程号。
  * public class ThreadId {
  *     // Atomic integer containing the next thread ID to be assigned
  *     private static final AtomicInteger nextId = new AtomicInteger(0);
  *
  *     // Thread local variable containing each thread's ID
- *     private static final ThreadLocal&lt;Integer&gt; threadId =
- *         new ThreadLocal&lt;Integer&gt;() {
- *             &#64;Override protected Integer initialValue() {
+ *     private static final ThreadLocal<Integer> threadId =
+ *         new ThreadLocal<Integer>() {
+ *             @Override protected Integer initialValue() {
  *                 return nextId.getAndIncrement();
  *         }
  *     };
@@ -380,6 +382,7 @@ public class ThreadLocal<T> {
          * ThreadLocalMaps are constructed lazily, so we only create
          * one when we have at least one entry to put in it.
          */
+        // 创建一个 size = 1 的 Map
         ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
             table = new Entry[INITIAL_CAPACITY];
             int i = firstKey.threadLocalHashCode & (INITIAL_CAPACITY - 1);
