@@ -558,6 +558,7 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * The synchronization state.
      */
+    // 同步状态，核心字段
     private volatile int state;
 
     /**
@@ -608,6 +609,7 @@ public abstract class AbstractQueuedSynchronizer
      * @param node the node to insert
      * @return node's predecessor
      */
+    // 将数据插入队列尾部，通过 CAS 的方式进行
     private Node enq(final Node node) {
         for (;;) {
             Node t = tail;
@@ -630,6 +632,7 @@ public abstract class AbstractQueuedSynchronizer
      * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
      * @return the new node
      */
+    // Waiter 是什么概念
     private Node addWaiter(Node mode) {
         Node node = new Node(Thread.currentThread(), mode);
         // Try the fast path of enq; backup to full enq on failure
@@ -652,6 +655,7 @@ public abstract class AbstractQueuedSynchronizer
      *
      * @param node the node
      */
+    // 获取操作调用
     private void setHead(Node node) {
         head = node;
         node.thread = null;
@@ -663,6 +667,7 @@ public abstract class AbstractQueuedSynchronizer
      *
      * @param node the node
      */
+    // 解放下一个
     private void unparkSuccessor(Node node) {
         /*
          * If status is negative (i.e., possibly needing signal) try
@@ -681,11 +686,13 @@ public abstract class AbstractQueuedSynchronizer
          */
         Node s = node.next;
         if (s == null || s.waitStatus > 0) {
+            // 如果没有找到，则从尾巴开始，往前找。
             s = null;
             for (Node t = tail; t != null && t != node; t = t.prev)
                 if (t.waitStatus <= 0)
                     s = t;
         }
+        // 找到了就把锁放开。
         if (s != null)
             LockSupport.unpark(s.thread);
     }
