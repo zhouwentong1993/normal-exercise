@@ -255,6 +255,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
+                // 公平锁在获取锁的时候会判断当前等待队列里面是否有比它等待时间更长的线程，如果有，则放弃。公平的体现。
                 if (!hasQueuedPredecessors() &&
                     compareAndSetState(0, acquires)) {
                     setExclusiveOwnerThread(current);

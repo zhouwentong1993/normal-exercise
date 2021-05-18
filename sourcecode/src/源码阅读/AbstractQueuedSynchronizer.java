@@ -314,8 +314,9 @@ public abstract class AbstractQueuedSynchronizer
     protected AbstractQueuedSynchronizer() { }
 
     /**
+     * Wait queue 数据结构
      * Wait queue node class.
-     *
+     * 是 CLH 队列的变种。CLH 队列通常用于自旋锁。在这里我们用它做同步器，策略还是一样，在节点的前驱节点记录信息
      * <p>The wait queue is a variant of a "CLH" (Craig, Landin, and
      * Hagersten) lock queue. CLH locks are normally used for
      * spinlocks.  We instead use them for blocking synchronizers, but
@@ -329,15 +330,19 @@ public abstract class AbstractQueuedSynchronizer
      * 当前置节点释放时，node 会被唤醒。
      * A node is signalled when its predecessor
      * releases.
+     * 队列中的每个节点都充当了监视器的角色？？？
      * Each node of the queue otherwise serves as a
      * specific-notification-style monitor holding a single waiting
      * thread.
+     *
+     * status 字段不保证线程的确获得锁。在队列开头并不保证一定会获取锁成功，只能保证有竞争权。
      * The status field does NOT control whether threads are
      * granted locks etc though.  A thread may try to acquire if it is
      * first in the queue. But being first does not guarantee success;
      * it only gives the right to contend.  So the currently released
      * contender thread may need to rewait.
      *
+     * 入队列从 tail 节点进入，出队列关注 head 节点。
      * <p>To enqueue into a CLH lock, you atomically splice it in as new
      * tail. To dequeue, you just set the head field.
      * <pre>
@@ -355,6 +360,7 @@ public abstract class AbstractQueuedSynchronizer
      * in part to deal with possible cancellation due to timeouts
      * and interrupts.
      *
+     * prev 节点的作用。
      * <p>The "prev" links (not used in original CLH locks), are mainly
      * needed to handle cancellation. If a node is cancelled, its
      * successor is (normally) relinked to a non-cancelled
@@ -386,6 +392,7 @@ public abstract class AbstractQueuedSynchronizer
      * effort if there is never contention. Instead, the node
      * is constructed and head and tail pointers are set upon first
      * contention.
+     *
      *
      * <p>Threads waiting on Conditions use the same nodes, but
      * use an additional link. Conditions only need to link nodes
@@ -547,18 +554,20 @@ public abstract class AbstractQueuedSynchronizer
      * If head exists, its waitStatus is guaranteed not to be
      * CANCELLED.
      */
+    // 头结点
     private transient volatile Node head;
 
     /**
      * Tail of the wait queue, lazily initialized.  Modified only via
      * method enq to add new wait node.
      */
+    // 尾结点
     private transient volatile Node tail;
 
     /**
      * The synchronization state.
      */
-    // 同步状态，核心字段
+    // 同步状态，核心字段 ☆☆☆☆
     private volatile int state;
 
     /**
@@ -602,6 +611,7 @@ public abstract class AbstractQueuedSynchronizer
      * rather than to use timed park. A rough estimate suffices
      * to improve responsiveness with very short timeouts.
      */
+    // 自旋
     static final long spinForTimeoutThreshold = 1000L;
 
     /**
@@ -609,10 +619,11 @@ public abstract class AbstractQueuedSynchronizer
      * @param node the node to insert
      * @return node's predecessor
      */
-    // 将数据插入队列尾部，通过 CAS 的方式进行
+    // 将数据插入队列尾部，通过死循环的方式进行
     private Node enq(final Node node) {
         for (;;) {
             Node t = tail;
+            // 延迟初始化
             if (t == null) { // Must initialize
                 if (compareAndSetHead(new Node()))
                     tail = head;
@@ -637,13 +648,16 @@ public abstract class AbstractQueuedSynchronizer
         Node node = new Node(Thread.currentThread(), mode);
         // Try the fast path of enq; backup to full enq on failure
         Node pred = tail;
+        // 如果有尾结点，直接通过 CAS 拼接
         if (pred != null) {
             node.prev = pred;
+            // 如果设置成功，返回，否则就通过死循环开搞。
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
             }
         }
+        // 否则死循环开搞。
         enq(node);
         return node;
     }
@@ -1229,6 +1243,10 @@ public abstract class AbstractQueuedSynchronizer
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
      */
+    // 独占式获取锁。
+    // 分为两个结果：
+    // ① 将 state 变量变更成想要的值，直接结束。
+    // ② 如果没有替换成功，就将自己以独占模式填充到队列当中，等待锁获取成功。
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
             acquireQueued(addWaiter(Node.EXCLUSIVE), arg))

@@ -22,7 +22,7 @@ public class Mutex implements Lock {
         TimeUnit.SECONDS.sleep(12);
     }
 
-    private static class sync extends AbstractQueuedSynchronizer {
+    public static class sync extends AbstractQueuedSynchronizer {
         @Override
         protected boolean tryAcquire(int arg) {
             checkArg(arg);
@@ -64,7 +64,7 @@ public class Mutex implements Lock {
 
     }
 
-    private static final sync sync = new sync();
+    public static final sync sync = new sync();
 
     @Override
     public void lock() {
