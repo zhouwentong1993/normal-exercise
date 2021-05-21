@@ -8,6 +8,7 @@ import org.redisson.config.TransportMode;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RedisLockDemo1 {
     public static void main(String[] args) throws Exception {
@@ -21,19 +22,43 @@ public class RedisLockDemo1 {
         RedissonClient redisson = Redisson.create(config);
         RLock testLock1 = redisson.getLock("testLock1");
         testLock1.lock();
-//        new Thread(() -> {
-//            RLock testLock11 = redisson.getLock("testLock1");
-//            testLock11.lock();
-//            try {
-//
-//            } finally {
-//                testLock11.unlock();
-//            }
-//        }).start();
-        testLock1.lock();
-        testLock1.lock();
-        testLock1.lock();
-        TimeUnit.SECONDS.sleep(20);
-        testLock1.unlock();
+        counter();
+
+
+        new Thread(() -> {
+            RLock testLock11 = redisson.getLock("testLock1");
+            testLock11.lock();
+            try {
+                System.out.println("sub thread get lock");
+            } finally {
+                testLock11.unlock();
+            }
+        }, "sub").start();
+        try {
+            testLock1.lock();
+            testLock1.lock();
+
+            System.out.println("main thread get lock");
+            TimeUnit.SECONDS.sleep(20);
+        } finally {
+            testLock1.unlock();
+        }
+
+    }
+
+    private static void counter() {
+        AtomicInteger counter = new AtomicInteger();
+
+        new Thread(() -> {
+            for (; ; ) {
+                counter.getAndIncrement();
+                System.out.println(counter.get());
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
