@@ -162,6 +162,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
 
     /** Wait queue for waiting takes */
     // 移除元素的 Condition
+            // 不为空，就代表可以 take
     private final Condition notEmpty = takeLock.newCondition();
 
     /** Lock held by put, offer, etc */
@@ -170,6 +171,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
 
     /** Wait queue for waiting puts */
     // 放入元素的 Condition
+            // 不满，就代表可以 put
     private final Condition notFull = putLock.newCondition();
 
     /**
@@ -422,6 +424,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
             }
             enqueue(new Node<E>(e));
             c = count.getAndIncrement();
+            // 如果可以 put，激活
             if (c + 1 < capacity)
                 notFull.signal();
         } finally {
@@ -467,6 +470,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         }
         if (c == 0)
             signalNotEmpty();
+        // update 2021年05月21日15:05:29：当时想得很对很好。
         // 添加成功的逻辑，这里为什么不直接 return true 呢？
         // 原因是：如果在 try 块里面抛出异常，到 finally 里面解锁，如果在后面直接 return true，其实没有入队列。
         // 只有在成功入队列之后，c 的值才会变化，这样即使在 c 改变之后抛出了异常，也不影响该元素被添加到队列。
@@ -533,6 +537,9 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
 
 
     // 无阻塞地获取队列中元素
+    // 为什么 takeLock 和 putLock 这两个锁可以控制成功，主要是因为这些方法开始的时候都是通过
+    // 本地变量的方式存储了，比如 final AtomicInteger count = this.count;
+    // 这就不会存在竞争问题，enqueue 和 dequeue 是对队列状态进行操作的。
     public E poll() {
         final AtomicInteger count = this.count;
         if (count.get() == 0)
