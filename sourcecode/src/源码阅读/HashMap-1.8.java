@@ -750,7 +750,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     // https://stackoverflow.com/questions/8352378/why-does-hashmap-require-that-the-initial-capacity-be-a-power-of-two
-    // 为什么 HashMap 要两倍扩容。1. length - 1 & hash 的操作比 % 的操作性能高。 2. 当两倍扩容时，之前元素的位置要么是当前位置，要么是两倍的位置
+    // 为什么 HashMap 要两倍扩容。1. length - 1 & hash 的操作比 % 的操作性能高。
+    // 2. 当两倍扩容时，之前元素的位置要么是当前位置，要么是两倍的位置
     // 具体来说，还是不太懂。
     final Node<K,V>[] resize() {
         // 在 ArrayList 和 HashMap 中都是把全局变量 copy 一份，在本地用。
