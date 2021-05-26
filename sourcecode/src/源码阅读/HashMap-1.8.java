@@ -350,6 +350,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * never be used in index calculations because of table bounds.
      */
     // 计算 hash 的方法
+    // 扰动函数。绝大部分的 HashMap size 比较小，如果直接用 (length - 1) & hashcode，那么 hashcode 只有
+    // 低位参与运算，通过 h >>> 16 将高位数字下移，并且通过 ^ 的方式打乱 0 1 顺序，这样可以让参与运算的数字更加散列。
     static final int hash(Object key) {
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
