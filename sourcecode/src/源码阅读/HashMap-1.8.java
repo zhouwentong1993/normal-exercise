@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Hash table 基于 Map 接口，允许 null key。与 HashTable 相比，不支持并发和允许 null 值，同样不保证存储的顺序和插入顺序相同。
+ * Hash table 基于 Map 接口，允许 null key。与 HashTable 相比，不支持并发安全和允许 null 值，同样不保证存储的顺序和插入顺序相同。
  * Hash table based implementation of the <tt>Map</tt> interface.  This
  * implementation provides all of the optional map operations, and permits
  * <tt>null</tt> values and the <tt>null</tt> key.  (The <tt>HashMap</tt>
@@ -45,7 +45,9 @@ import java.util.function.Function;
  * the order of the map; in particular, it does not guarantee that the order
  * will remain constant over time.
  *
- * HashMap 提供了常量级别的性能，get & put 方法。不要随便地修改 capacity。
+ * HashMap 提供了常量级别的性能，get & put 方法。当 Hashcode 方法散列效果比较好时。
+ * 不要随便地修改 capacity。如果你关注遍历性能的话，不要将 capacity 初始地设置过大。
+ * 遍历 HashMap 的时间由 capacity 和 size 决定。
  * <p>This implementation provides constant-time performance for the basic
  * operations (<tt>get</tt> and <tt>put</tt>), assuming the hash function
  * disperses the elements properly among the buckets.  Iteration over
@@ -55,7 +57,8 @@ import java.util.function.Function;
  * capacity too high (or the load factor too low) if iteration performance is
  * important.
  *
- * 加载因子和分组组数，各自起到什么作用。
+ * 初始容量和负载因子，各自起到什么作用。
+ * 初始容量是描述 HashMap 初始化容量的，负载因子是用来描述 HashMap「满」的程度的
  * <p>An instance of <tt>HashMap</tt> has two parameters that affect its
  * performance: <i>initial capacity</i> and <i>load factor</i>.  The
  * <i>capacity</i> is the number of buckets in the hash table, and the initial
@@ -67,7 +70,10 @@ import java.util.function.Function;
  * structures are rebuilt) so that the hash table has approximately twice the
  * number of buckets.
  *
- * 0.75 是非常好的时间和空间的平衡点。没事儿被瞎改。
+ * 0.75 是非常好的时间和空间的平衡点。没事儿别瞎改。
+ * 如果你将初始容量设置成最大容量 / 负载因子，那么 HashMap 在操作过程中就不会出现 rehash 现象。
+ * Guava 提供了 Maps.newHashMapWithExpectedSize（size），背后就是通过这种逻辑实现的。
+ * 我通过 JMH 测试过，这种方式的 tps 是最大的。
  * <p>As a general rule, the default load factor (.75) offers a good
  * tradeoff between time and space costs.  Higher values decrease the
  * space overhead but increase the lookup cost (reflected in most of
@@ -162,13 +168,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * normal use are not overpopulated, checking for existence of
      * tree bins may be delayed in the course of table methods.
      *
-     * 换成 TreeMap 是值得的，能够获得 O(log n) 的效率提升。
+     * 换成 TreeMap 是值得的，带来了很大的复杂度，能够获得 O(log n) 的效率提升。
      * Tree bins (i.e., bins whose elements are all TreeNodes) are
      * ordered primarily by hashCode, but in the case of ties, if two
      * elements are of the same "class C implements Comparable<C>",
      * type then their compareTo method is used for ordering. (We
      * conservatively check generic types via reflection to validate
-     * this -- see method comparableClassFor).  The added complexity
+     * this -- see method comparableClassFor). The added complexity
      * of tree bins is worthwhile in providing worst-case O(log n)
      * operations when keys either have distinct hashes or are
      * orderable, Thus, performance degrades gracefully under
@@ -183,6 +189,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * 当且仅当 hash 冲突的元素大于 8 时，才会触发链表到 TreeMap 的转换，如果你正确定义了
      * hashCode() 方法，很少有机会变成 TreeMap，当 remove 等移除方法调用时，如果长度低于 8，就会退化成 LinkedList。
+     * 符合泊松分布
      * Because TreeNodes are about twice the size of regular nodes, we
      * use them only when bins contain enough nodes to warrant use
      * (see TREEIFY_THRESHOLD). And when they become too small (due to
