@@ -402,6 +402,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Returns a power of two size for the given target capacity.
      */
     // 返回大于传入数据的最小 2 的倍数
+    // why: 取余运算太耗时，通过 & 运算快速。 hashcode & (table.length - 1) == hashcode % table.length
     static final int tableSizeFor(int cap) {
         int n = cap - 1;
         n |= n >>> 1;
@@ -541,6 +542,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         if (s > 0) {
             // 当 Map 中没有元素时，通过传入 map 的 size() / loadFactor + 1 的方式找到预计容量
             if (table == null) { // pre-size
+                // 直接分配足够大的空间，这样就不会发生 rehash 现象。
                 float ft = ((float)s / loadFactor) + 1.0F;
                 int t = ((ft < (float)MAXIMUM_CAPACITY) ?
                          (int)ft : MAXIMUM_CAPACITY);
@@ -548,6 +550,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     threshold = tableSizeFor(t);
             }
             // 当 Map 不为空且元素数量大于当前容量，触发扩容操作，这样的问题在于，有可能需要扩容多次。为什么不按照具体的长度来一步到位扩容呢
+            // 这个问题很好，todo 测试 ---> done（需要多次触发扩容操作）
             else if (s > threshold)
                 resize();
             // 遍历 Map，将值放入
@@ -620,6 +623,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             (first = tab[(n - 1) & hash]) != null) {
             // 校验 hash 和 key（== &&）
             // 如果 hash 和 key 相同，则返回
+            // 如果数组中的第一个元素就是待查询元素，则返回。
             if (first.hash == hash && // always check first node
                 ((k = first.key) == key || (key != null && key.equals(k))))
                 return first;
@@ -628,8 +632,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 // 如果是 TreeNode。顺便说下，TreeNode 是 LinkedHashMap.Entry<K,V> 的实现类。
                 // 而 LinkedHashMap.Entry<K,V> extends HashMap.Node<K,V>，所以可以通过 instanceof 操作。
                 if (first instanceof TreeNode)
+                    // 遍历红黑树来找对应元素。
                     return ((TreeNode<K,V>)first).getTreeNode(hash, key);
-                // 遍历数组
+                // 遍历链表
                 do {
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
@@ -693,7 +698,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         // HashMap 中经常会用到这些手法，一个语句混杂了赋值和运算。
         // 找到位置，如果当前数组位置没有元素
         if ((p = tab[i = (n - 1) & hash]) == null)
-            // 正好把待插入放到当前位置，没有 next。
+            // 正好把待插入放到当前位置，没有 next。因为现在只有它一个，所以直接创建成链表就行
             tab[i] = newNode(hash, key, value, null);
         else {
             // 数组当前节点有元素，需要 append 元素到链表或 TreeMap 上
@@ -704,7 +709,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 e = p;
             // 如果是 TreeNode
             else if (p instanceof TreeNode)
-                // 放入
+                // 放入红黑树结构中
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
                 // 如果是链表
@@ -764,10 +769,18 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         // 在 ArrayList 和 HashMap 中都是把全局变量 copy 一份，在本地用。
         Node<K,V>[] oldTab = table;
         // 都是用原生类型，效率高。
+        // table 的大小。
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        // 扩容阈值
         int oldThr = threshold;
         int newCap, newThr = 0;
-        if (oldCap > 0) {
+        // 下面这一套 if else 主要就是确定 newCap。主要逻辑如下：
+        // ① 如果 table 已经被初始化则：
+        //   1. 如果两倍扩容后不超过最大容量 && 之前的容量大于 16（默认构造函数创建的），则两倍扩容。
+        //   2. 如果小于 16，则用之前的 threshold 来替代新的大小。为了节省空间。
+        // ② 如果没有被初始化
+        //   1. 则采用默认配置 16
+        if (oldCap > 0) { // HashMap 已经被初始化了
             // 超过最大限制，就不会扩容了。我试图通过写单元测试向 HashMap 里面放 MAX_VALUE 数量的元素，妈的直接内存不够了。
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
@@ -775,6 +788,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
             // 如果扩容之后在合适的容量区间内，两倍扩容
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                    // 当 Map map = new HashMap(1) 时，capacity 是 1
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
                 newThr = oldThr << 1; // double threshold
         }
@@ -812,22 +826,32 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     else { // preserve order
                         // 在同一个链表中，resize() 之后会有两种结果，一是维持在原地，二是维持在当前节点 + rehash 的大小。
+                        // lo 代表 low，low 就是位置不变的意思，也就是维持在原地。
                         Node<K,V> loHead = null, loTail = null;
+                        // hi 代表 high，high 就是变更位置的意思，最后的位置在 j + oldCap 上。
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
                         do {
                             // 肯定不为空
                             next = e.next;
                             // 如果为 0，那么意味着在扩容时，这些元素在前后数组中的位置是不变的。
+                            // 简单理解：
+                            //  假设扩容前 capacity = 16，扩容后 capacity = 32。
+                            //  扩容前的元素（e）的位置 = (e.hash) & (16-1) => (e.hash) & 1111
+                            //  扩容后的元素（e）的位置 = (e.hash) & (32-1) => (e.hash) & 11111
+                            //  很显然，扩容后元素的位置跟扩容前的元素的位置仅在最高位（第五位）上有区别，如果 e.hash 最高位是 0，则位置不变，如果是 1，则位置发生变更。
+                            //  如何检测最高位是否为 0 呢？就可以通过 (e.hash) & 16 => (e.hash) & 10000，如果高位为 0，则返回 0，如果高位不为 0，则结果也不为 0。
+                            //  所以下面的逻辑就是当 e.hash & oldCap == 0 时，代表 rehash 之后位置不变。
                             // 感谢 https://www.jianshu.com/p/c91b010dc03a，主要是通过与 oldCap 做与运算，如果得 0，扩容之后的位置不变。
                             if ((e.hash & oldCap) == 0) {
+                                // 将结点连接上。
                                 if (loTail == null)
                                     loHead = e;
                                 else
                                     loTail.next = e;
                                 loTail = e;
                             }
-                            // 不为 0，意味着这些元素需要在前后数组中需要变化，变化后的位置 = 变化前的位置 + rehash 变化的位置
+                            // 不为 0，意味着这些元素需要在前后数组中需要变化，变化后的位置 = 变化前的位置 + oldCap
                             else {
                                 if (hiTail == null)
                                     hiHead = e;

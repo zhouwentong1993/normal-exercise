@@ -18,7 +18,9 @@ public class TestHashMap {
 
     @Test
     public void testConstruct() {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(1);
+        map.put("a", "a");
+        map.put("b", "a");
         System.out.println(map);
     }
 
@@ -45,8 +47,8 @@ public class TestHashMap {
 
     @Test
     public void testTableSize() {
-        int i = tableSizeFor(5);
-        Assert.assertEquals(i, 8);
+        int i = tableSizeFor(1);
+        Assert.assertEquals(1, i);
     }
 
     @Test
@@ -216,11 +218,29 @@ public class TestHashMap {
 
 
     /**
+     * 测试当调用 putMapEntries 时，如果传入集合大于两倍 threshold 会发生什么
+     * 会经过多次扩容操作。
+     * 下面代码可以优化，如果将 map1.putAll 放到前面，就不用触发多次扩容操作了。
+     */
+    @Test
+    public void testPutMapEntries() {
+        Map<Integer, Integer> map = new HashMap<>();
+        Map<Integer, Integer> map1 = new HashMap<>();
+        for (int i = 0; i < 100; i++) {
+            map.put(i, i);
+        }
+        map1.put(101, 101);
+        map1.putAll(map);
+
+    }
+
+
+    /**
      * 当 put foo9 时，会调用 treeify 方法，但是实际不会变成树结构，因为 tab.length < 64，需要等再多两次 resize 才能到 64，也就是 put foo11 时，这时会将 list 转换成 TreeMap
      */
     @Test
     public void testTreeify() {
-        Map<Foo1,String> map = new HashMap<>();
+        Map<Foo1, String> map = new HashMap<>();
         Foo1 foo1 = new Foo1(1);
         Foo1 foo2 = new Foo1(1);
         Foo1 foo3 = new Foo1(1);
