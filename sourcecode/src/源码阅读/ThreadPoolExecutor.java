@@ -57,7 +57,7 @@ import java.util.*;
  * statistics, such as the number of completed tasks.
  *
  * 为了能够更好地处理 context，该类提供了大量的可调整的参数和可拓展的钩子。
- * 程序员们也可以通过更为方便的工厂方法去实现功能（注意！许多工厂方法有坑，尽量不要用，可能导致 OOM）
+ * 程序员们也可以通过更为方便的工厂方法去实现功能（注意！许多工厂方法有坑，尽量不要用，可能导致 OOM），具体来说，只要是不受限制的，都有可能出问题
  * <p>To be useful across a wide range of contexts, this class
  * provides many adjustable parameters and extensibility
  * hooks. However, programmers are urged to use the more convenient
@@ -366,7 +366,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *   runState,    indicating whether running, shutting down etc 说明线程执行状态，是否在运行。
      *
      * 这里面做了一个优化，为了让代码快一点儿，将 workerCount 限制到了 (2^29)-1 个，
-     * 如果后面真得到了这个量，可以将该类扩展为 AtomicLong 类型的，一般很难有系统到这个量。
+     * 如果后面真到了这个量，可以将该类扩展为 AtomicLong 类型的，一般很难有系统到这个量。
      * In order to pack them into one int, we limit workerCount to
      * (2^29)-1 (about 500 million) threads rather than (2^31)-1 (2
      * billion) otherwise representable. If this is ever an issue in
@@ -1172,7 +1172,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             int rs = runStateOf(c);
 
             // Check if queue empty only if necessary.
-            // 如果 queue 整完了，减工作线程就完了
+            // 如果 queue 空了，避免浪费线程，减少工作线程的数量。
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
                 decrementWorkerCount();
                 return null;
@@ -1182,7 +1182,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
 
             // Are workers subject to culling?
             boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
-
+            // Worker 淘汰机制
             if ((wc > maximumPoolSize || (timed && timedOut))
                 && (wc > 1 || workQueue.isEmpty())) {
                 if (compareAndDecrementWorkerCount(c))
@@ -1208,7 +1208,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * Main worker run loop.  Repeatedly gets tasks from queue and
      * executes them, while coping with a number of issues:
      *
-     * 通过不断地轮询队列来获取任务
+     * 通过不断地轮询队列来获取任务，根据配置，看是否要停掉 Worker
      * 1. We may start out with an initial task, in which case we
      * don't need to get the first one. Otherwise, as long as pool is
      * running, we get tasks from getTask. If it returns null then the
@@ -1218,6 +1218,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * usually leads processWorkerExit to replace this thread.
      *
      * 在运行任务之前，为防止当任务执行中被其他线程池中断，会加锁。保证除非池子停止，否则线程不会中断。
+     *
      * 2. Before running any task, the lock is acquired to prevent
      * other pool interrupts while the task is executing, and then we
      * ensure that unless pool is stopping, this thread does not have
@@ -1239,6 +1240,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * UncaughtExceptionHandler).  Any thrown exception also
      * conservatively causes thread to die.
      *
+     * 通过钩子函数来传递异常信息。
      * 5. After task.run completes, we call afterExecute, which may
      * also throw an exception, which will also cause thread to
      * die. According to JLS Sec 14.20, this exception is the one that
@@ -1251,13 +1253,16 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @param w the worker
      */
+    // runWorker 就是通过向阻塞队列申请任务，获得任务后对任务加锁，执行任务，然后解锁。
     final void runWorker(Worker w) {
         Thread wt = Thread.currentThread();
         Runnable task = w.firstTask;
         w.firstTask = null;
+        // why? 将执行该线程的线程池解锁？
         w.unlock(); // allow interrupts
         boolean completedAbruptly = true;
         try {
+            // 通过对阻塞队列死循环获取来得到任务。
             while (task != null || (task = getTask()) != null) {
                 w.lock();
                 // If pool is stopping, ensure thread is interrupted;
@@ -1275,6 +1280,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     Throwable thrown = null;
                     try {
                         // 执行的 run 方法！！！没有执行 start 方法。
+                        // 因为这已经是在 Worker 线程的 run 方法里面了，外部通过调用 Worker 线程的 start 方法来启动线程
+                        // 这里调用 run 方法其实就是调用一个普通方法罢了，恰巧 run 方法是每个 Runnable 都需要覆盖的方法，直接执行就行。
                         task.run();
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
@@ -1411,19 +1418,26 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @param corePoolSize the number of threads to keep in the pool, even
      *        if they are idle, unless {@code allowCoreThreadTimeOut} is set
+     *        核心线程数，常驻。除非 allowCoreThreadTimeOut 为 true
      * @param maximumPoolSize the maximum number of threads to allow in the
      *        pool
+     *        最大线程数
      * @param keepAliveTime when the number of threads is greater than
      *        the core, this is the maximum time that excess idle threads
      *        will wait for new tasks before terminating.
+     *        多出核心线程数的线程，在空闲情况下等多久会被销毁
      * @param unit the time unit for the {@code keepAliveTime} argument
+     *        时间单位，与 keepAliveTime 配合使用
      * @param workQueue the queue to use for holding tasks before they are
      *        executed.  This queue will hold only the {@code Runnable}
      *        tasks submitted by the {@code execute} method.
+     *        工作队列，持有准备被执行的任务
      * @param threadFactory the factory to use when the executor
      *        creates a new thread
+     *        线程生产工厂
      * @param handler the handler to use when execution is blocked
      *        because the thread bounds and queue capacities are reached
+     *        到了线程和队列的上限时，怎么操作。
      * @throws IllegalArgumentException if one of the following holds:<br>
      *         {@code corePoolSize < 0}<br>
      *         {@code keepAliveTime < 0}<br>
@@ -1449,6 +1463,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         this.corePoolSize = corePoolSize;
         this.maximumPoolSize = maximumPoolSize;
         this.workQueue = workQueue;
+        // 实现纳秒级别的控制
         this.keepAliveTime = unit.toNanos(keepAliveTime);
         this.threadFactory = threadFactory;
         this.handler = handler;
@@ -1468,6 +1483,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *         cannot be accepted for execution
      * @throws NullPointerException if {@code command} is null
      */
+    // 核心逻辑，执行 command
     public void execute(Runnable command) {
         if (command == null)
             throw new NullPointerException();
@@ -1753,6 +1769,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @return the number of threads started
      */
+    // 为了效率，预热 CoreThread。不需要等任务进来再创建线程了。
     public int prestartAllCoreThreads() {
         int n = 0;
         while (addWorker(null, true))
