@@ -45,7 +45,7 @@ public class  TestAQS {
 
     /**
      * 只有一个线程能获取到锁，由于没有使用 CountDownLatch，所以通常是 Thread0 获取
-     * 其他线程在 AQS 的队列按照顺序待着，没过 10s，就会按照顺序获取锁。
+     * 其他线程在 AQS 的队列按照顺序待着，每过 10s，就会按照顺序获取锁。
      * @throws Exception
      */
     @Test
