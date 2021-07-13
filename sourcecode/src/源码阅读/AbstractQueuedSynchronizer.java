@@ -1735,6 +1735,7 @@ public abstract class AbstractQueuedSynchronizer
          */
         Node p = enq(node);
         int ws = p.waitStatus;
+        // 将节点状态设置为 SIGNAL，unpark 线程。
         if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
             LockSupport.unpark(node.thread);
         return true;
@@ -1773,6 +1774,7 @@ public abstract class AbstractQueuedSynchronizer
         boolean failed = true;
         try {
             int savedState = getState();
+            // 释放锁，让其他线程获取锁
             if (release(savedState)) {
                 failed = false;
                 return savedState;
@@ -1901,6 +1903,7 @@ public abstract class AbstractQueuedSynchronizer
         private Node addConditionWaiter() {
             Node t = lastWaiter;
             // If lastWaiter is cancelled, clean out.
+            // 清理 cancelled 状态的 node。
             if (t != null && t.waitStatus != Node.CONDITION) {
                 unlinkCancelledWaiters();
                 t = lastWaiter;
@@ -1909,6 +1912,7 @@ public abstract class AbstractQueuedSynchronizer
             if (t == null)
                 firstWaiter = node;
             else
+            // 将 node 连接到队列上，排在队列最后面
                 t.nextWaiter = node;
             lastWaiter = node;
             return node;
@@ -2085,11 +2089,15 @@ public abstract class AbstractQueuedSynchronizer
         public final void await() throws InterruptedException {
             if (Thread.interrupted())
                 throw new InterruptedException();
+            // 创建新结点，连接到队列尾部位置。
             Node node = addConditionWaiter();
+            // 主动释放锁，让其它线程获取锁。
             int savedState = fullyRelease(node);
             int interruptMode = 0;
+            // 自我 park，等待 node 的状态不为 CONDITION
             while (!isOnSyncQueue(node)) {
                 LockSupport.park(this);
+                // 如果被 interrupt 了，也可以跳出循环
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                     break;
             }
