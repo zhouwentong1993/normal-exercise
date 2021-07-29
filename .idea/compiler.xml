@@ -14,16 +14,18 @@
         <module name="redis" />
         <module name="demo" />
         <module name="small-dependency" />
+        <module name="caffeine" />
         <module name="es" />
         <module name="asm" />
-        <module name="rabbitmq" />
+        <module name="spring" />
         <module name="guava" />
+        <module name="springboot-redisson" />
         <module name="admin-server" />
         <module name="javacore" />
         <module name="spring-cache" />
         <module name="hystrix" />
         <module name="slf4j-demo" />
-        <module name="springboot-redisson" />
+        <module name="rabbitmq" />
         <module name="mq" />
         <module name="microservices" />
         <module name="aviator" />
@@ -32,7 +34,6 @@
         <module name="netty" />
         <module name="spock" />
         <module name="caching" />
-        <module name="spring" />
         <module name="hutool" />
         <module name="zipkin-server" />
       </profile>
@@ -54,6 +55,7 @@
       <module name="asm" target="8" />
       <module name="aviator" target="1.8" />
       <module name="caching" target="1.8" />
+      <module name="caffeine" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="druid-demo" target="1.8" />

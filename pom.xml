@@ -40,6 +40,7 @@
         <module>asm</module>
         <module>small-dependency</module>
         <module>es</module>
+        <module>caffeine</module>
     </modules>
 
 </project>
