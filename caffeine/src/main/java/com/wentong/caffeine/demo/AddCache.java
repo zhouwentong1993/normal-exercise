@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.wentong.caffeine.demo.Person.createExpensiveGraph;
+
 public class AddCache {
     public static void main(String[] args) throws Exception {
 //        loadCacheManual();
@@ -21,7 +23,7 @@ public class AddCache {
         LoadingCache<String, Person> cache = Caffeine.newBuilder()
                 .maximumSize(10_000)
                 .expireAfterWrite(10, TimeUnit.SECONDS)
-                .build(AddCache::createExpensiveGraph);
+                .build(Person::createExpensiveGraph);
         Person p = cache.get("李四");
         System.out.println(p);
 
@@ -50,31 +52,6 @@ public class AddCache {
         System.out.println(cache.getIfPresent(name));
         // 移除一个缓存元素
         cache.invalidate(name);
-    }
-
-    private static Person createExpensiveGraph(String name) {
-        return new Person(name, 10, "北京");
-    }
-
-    static class Person {
-        String name;
-        int age;
-        String address;
-
-        public Person(String name, int age, String address) {
-            this.name = name;
-            this.age = age;
-            this.address = address;
-        }
-
-        @Override
-        public String toString() {
-            return "Person{" +
-                    "name='" + name + '\'' +
-                    ", age=" + age +
-                    ", address='" + address + '\'' +
-                    '}';
-        }
     }
 
 }
