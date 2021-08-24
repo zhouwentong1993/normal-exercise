@@ -11,22 +11,22 @@
         <module name="concurrent" />
         <module name="admin-client" />
         <module name="sourcecode" />
-        <module name="mq" />
         <module name="redis" />
         <module name="demo" />
         <module name="small-dependency" />
         <module name="caffeine" />
         <module name="es" />
         <module name="asm" />
-        <module name="rabbitmq" />
+        <module name="spring" />
         <module name="guava" />
+        <module name="springboot-redisson" />
         <module name="admin-server" />
         <module name="javacore" />
         <module name="spring-cache" />
         <module name="hystrix" />
         <module name="slf4j-demo" />
-        <module name="springboot-redisson" />
-        <module name="spring" />
+        <module name="rabbitmq" />
+        <module name="mq" />
         <module name="microservices" />
         <module name="aviator" />
         <module name="redisson" />
@@ -55,7 +55,7 @@
       <module name="asm" target="8" />
       <module name="aviator" target="1.8" />
       <module name="caching" target="1.8" />
-      <module name="caffeine" target="13" />
+      <module name="caffeine" target="1.8" />
       <module name="concurrent" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="druid-demo" target="1.8" />
@@ -69,6 +69,7 @@
       <module name="microservices" target="1.8" />
       <module name="mq" target="1.8" />
       <module name="netty" target="1.8" />
+      <module name="normal-exercise" target="1.8" />
       <module name="redis" target="1.8" />
       <module name="redisson" target="1.8" />
       <module name="slf4j-demo" target="1.8" />
@@ -76,6 +77,7 @@
       <module name="sourcecode" target="1.8" />
       <module name="spock" target="1.8" />
       <module name="spring" target="1.8" />
+      <module name="spring-cache" target="1.8" />
       <module name="springboot-admin" target="1.8" />
       <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
@@ -94,6 +96,7 @@
       <module name="microservices" options="-parameters" />
       <module name="redisson" options="-parameters" />
       <module name="spring" options="-parameters" />
+      <module name="spring-cache" options="-parameters" />
       <module name="springboot-admin" options="-parameters" />
     </option>
   </component>
