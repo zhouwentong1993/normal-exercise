@@ -304,6 +304,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         V value;
         Node<K,V> next;
 
+        // 构造函数会连接数据
         Node(int hash, K key, V value, Node<K,V> next) {
             this.hash = hash;
             this.key = key;

@@ -548,6 +548,7 @@ public class HashMap<K,V>
      *        capacity is MAXIMUM_CAPACITY (in which case value
      *        is irrelevant).
      */
+    // 扩容
     void resize(int newCapacity) {
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
@@ -778,6 +779,7 @@ public class HashMap<K,V>
         /**
          * Creates new entry.
          */
+        // 会自动将 next 指向下一个元素
         Entry(int h, K k, V v, Entry<K,V> n) {
             value = v;
             next = n;
