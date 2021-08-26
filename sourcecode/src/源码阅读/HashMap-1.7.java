@@ -465,6 +465,8 @@ public class HashMap<K,V>
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
+    // 整体是数组 + 链表的方式。采用头插法（每次都是插入到 table[index] 位置，如果原位置有数据，则将 next 指针指向该数据）
+    // 先扩容，后插入。
     public V put(K key, V value) {
         if (key == null)
             return putForNullKey(value);
@@ -851,6 +853,7 @@ public class HashMap<K,V>
     void addEntry(int hash, K key, V value, int bucketIndex) {
         if ((size >= threshold) && (null != table[bucketIndex])) {
             resize(2 * table.length);
+            // 为什么又重新算了一遍 hash，可能是怕 hash 函数写得不好，会变。影响散列效果。
             hash = (null != key) ? hash(key) : 0;
             bucketIndex = indexFor(hash, table.length);
         }
