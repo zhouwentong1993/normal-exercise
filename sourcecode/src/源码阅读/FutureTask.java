@@ -34,6 +34,7 @@
  */
 
 package java.util.concurrent;
+
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -56,9 +57,9 @@ import java.util.concurrent.locks.LockSupport;
  * {@code protected} functionality that may be useful when creating
  * customized task classes.
  *
- * @since 1.5
- * @author Doug Lea
  * @param <V> The result type returned by this FutureTask's {@code get} methods
+ * @author Doug Lea
+ * @since 1.5
  */
 // FutureTask 是一个包装了 Callable 和 outcome 的类，里面通过 state 来区分状态。
 public class FutureTask<V> implements RunnableFuture<V> {
@@ -83,7 +84,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * cancel(true)). Transitions from these intermediate to final
      * states use cheaper ordered/lazy writes because values are unique
      * and cannot be further modified.
-     *
+     * <p>
      * Possible state transitions:
      * NEW -> COMPLETING -> NORMAL
      * NEW -> COMPLETING -> EXCEPTIONAL
@@ -91,21 +92,29 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * NEW -> INTERRUPTING -> INTERRUPTED
      */
     private volatile int state;
-    private static final int NEW          = 0;
-    private static final int COMPLETING   = 1;
-    private static final int NORMAL       = 2;
-    private static final int EXCEPTIONAL  = 3;
-    private static final int CANCELLED    = 4;
+    private static final int NEW = 0;
+    private static final int COMPLETING = 1;
+    private static final int NORMAL = 2;
+    private static final int EXCEPTIONAL = 3;
+    private static final int CANCELLED = 4;
     private static final int INTERRUPTING = 5;
-    private static final int INTERRUPTED  = 6;
+    private static final int INTERRUPTED = 6;
 
-    /** The underlying callable; nulled out after running */
+    /**
+     * The underlying callable; nulled out after running
+     */
     private Callable<V> callable;
-    /** The result to return or exception to throw from get() */
+    /**
+     * The result to return or exception to throw from get()
+     */
     private Object outcome; // non-volatile, protected by state reads/writes
-    /** The thread running the callable; CASed during run() */
+    /**
+     * The thread running the callable; CASed during run()
+     */
     private volatile Thread runner;
-    /** Treiber stack of waiting threads */
+    /**
+     * Treiber stack of waiting threads
+     */
     private volatile WaitNode waiters;
 
     /**
@@ -117,17 +126,17 @@ public class FutureTask<V> implements RunnableFuture<V> {
     private V report(int s) throws ExecutionException {
         Object x = outcome;
         if (s == NORMAL)
-            return (V)x;
+            return (V) x;
         if (s >= CANCELLED)
             throw new CancellationException();
-        throw new ExecutionException((Throwable)x);
+        throw new ExecutionException((Throwable) x);
     }
 
     /**
      * Creates a {@code FutureTask} that will, upon running, execute the
      * given {@code Callable}.
      *
-     * @param  callable the callable task
+     * @param callable the callable task
      * @throws NullPointerException if the callable is null
      */
     public FutureTask(Callable<V> callable) {
@@ -143,10 +152,10 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * given result on successful completion.
      *
      * @param runnable the runnable task
-     * @param result the result to return on successful completion. If
-     * you don't need a particular result, consider using
-     * constructions of the form:
-     * {@code Future<?> f = new FutureTask<Void>(runnable, null)}
+     * @param result   the result to return on successful completion. If
+     *                 you don't need a particular result, consider using
+     *                 constructions of the form:
+     *                 {@code Future<?> f = new FutureTask<Void>(runnable, null)}
      * @throws NullPointerException if the runnable is null
      */
     public FutureTask(Runnable runnable, V result) {
@@ -216,7 +225,8 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * implementation of this method to determine whether this task
      * has been cancelled.
      */
-    protected void done() { }
+    protected void done() {
+    }
 
     /**
      * Sets the result of this future to the given value unless
@@ -355,7 +365,10 @@ public class FutureTask<V> implements RunnableFuture<V> {
     static final class WaitNode {
         volatile Thread thread;
         volatile WaitNode next;
-        WaitNode() { thread = Thread.currentThread(); }
+
+        WaitNode() {
+            thread = Thread.currentThread();
+        }
     }
 
     /**
@@ -364,9 +377,9 @@ public class FutureTask<V> implements RunnableFuture<V> {
      */
     private void finishCompletion() {
         // assert state > COMPLETING;
-        for (WaitNode q; (q = waiters) != null;) {
+        for (WaitNode q; (q = waiters) != null; ) {
             if (UNSAFE.compareAndSwapObject(this, waitersOffset, q, null)) {
-                for (;;) {
+                for (; ; ) {
                     Thread t = q.thread;
                     if (t != null) {
                         q.thread = null;
@@ -394,12 +407,14 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * @param nanos time to wait, if timed
      * @return state upon completion
      */
+    // 每个线程进来都会调用 LockSupport.park(this) 来阻塞自己，然后将自己的线程包装成 WaitNode 放到链表里面。
+    // 等待 set 方法调用，遍历整个链表，然后 LockSupport.unpark 来释放所有的锁。
     private int awaitDone(boolean timed, long nanos)
             throws InterruptedException {
         final long deadline = timed ? System.nanoTime() + nanos : 0L;
         WaitNode q = null;
         boolean queued = false;
-        for (;;) {
+        for (; ; ) {
             if (Thread.interrupted()) {
                 removeWaiter(q);
                 throw new InterruptedException();
@@ -410,8 +425,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
                 if (q != null)
                     q.thread = null;
                 return s;
-            }
-            else if (s == COMPLETING) // cannot time out yet
+            } else if (s == COMPLETING) // cannot time out yet
                 Thread.yield();
             else if (q == null)
                 q = new WaitNode();
@@ -425,8 +439,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
                     return state;
                 }
                 LockSupport.parkNanos(this, nanos);
-            }
-            else
+            } else
                 LockSupport.park(this);
         }
     }
@@ -445,7 +458,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
         if (node != null) {
             node.thread = null;
             retry:
-            for (;;) {          // restart on removeWaiter race
+            for (; ; ) {          // restart on removeWaiter race
                 for (WaitNode pred = null, q = waiters, s; q != null; q = s) {
                     s = q.next;
                     if (q.thread != null)
@@ -454,8 +467,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
                         pred.next = s;
                         if (pred.thread == null) // check for race
                             continue retry;
-                    }
-                    else if (!UNSAFE.compareAndSwapObject(this, waitersOffset,
+                    } else if (!UNSAFE.compareAndSwapObject(this, waitersOffset,
                             q, s))
                         continue retry;
                 }
@@ -469,6 +481,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
     private static final long stateOffset;
     private static final long runnerOffset;
     private static final long waitersOffset;
+
     static {
         try {
             UNSAFE = sun.misc.Unsafe.getUnsafe();
