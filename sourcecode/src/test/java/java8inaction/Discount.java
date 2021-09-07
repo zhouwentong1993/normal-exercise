@@ -1,4 +1,4 @@
-package com.wentong.demo.java8inaction;
+package java8inaction;
 
 import lombok.SneakyThrows;
 
