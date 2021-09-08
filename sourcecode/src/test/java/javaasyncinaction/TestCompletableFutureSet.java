@@ -1,9 +1,13 @@
 package javaasyncinaction;
 
+import com.sun.org.apache.bcel.internal.generic.LNEG;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import util.SleepUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class TestCompletableFutureSet {
@@ -80,6 +84,45 @@ public class TestCompletableFutureSet {
             }
         });
         Assert.assertEquals("hello world!", f2.get());
+    }
+
+    public static void main(String[] args) throws Exception {
+        // 测试 thenCompose，代表
+//        CompletableFuture<String> f1 = doSomethingOne("abc");
+//        CompletableFuture<String> result = f1.thenCompose(TestCompletableFutureSet::doSomethingTwo);
+//        System.out.println(result.get());
+
+        // thenCombine 并发执行
+//        CompletableFuture<String> result = doSomethingOne("abc").thenCombine(doSomethingTwo("cba"), (one, two) -> one + " " + two);
+//        System.out.println(result.get());
+
+        // allOf 是所有的都并发执行
+        List<CompletableFuture<String>> list = new ArrayList<>();
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        list.add(doSomethingOne("abc"));
+        CompletableFuture<Void> future = CompletableFuture.allOf(list.toArray(new CompletableFuture[0]));
+        System.out.println(future.get());
+
+    }
+
+    private static CompletableFuture<String> doSomethingOne(String encryptionId) {
+        return CompletableFuture.supplyAsync(() -> {
+            SleepUtil.sleepSeconds(3);
+            return encryptionId;
+        });
+    }
+
+    private static CompletableFuture<String> doSomethingTwo(String id) {
+        return CompletableFuture.supplyAsync(() -> {
+            SleepUtil.sleepSeconds(3);
+            return StringUtils.reverse(id);
+        });
     }
 
 }
