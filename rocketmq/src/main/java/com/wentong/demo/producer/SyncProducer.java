@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class SyncProducer {
 
     public static void main(String[] args) throws Exception {
-        DefaultMQProducer producer = new DefaultMQProducer("please_rename_unique_group_name");
+        DefaultMQProducer producer = new DefaultMQProducer("sync-group-name");
         producer.setNamesrvAddr("localhost:9876");
         producer.start();
 

@@ -26,16 +26,15 @@ public class AsyncProducer {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     latch.countDown();
-                    System.out.println("AsyncProducer.onSuccess");
+                    System.out.println(sendResult);
                 }
 
                 @Override
                 public void onException(Throwable throwable) {
                     latch.countDown();
-                    System.out.println("AsyncProducer.onException");
                     throwable.printStackTrace();
                 }
-            });
+            },10000000);
         }
         latch.await();
         producer.shutdown();
