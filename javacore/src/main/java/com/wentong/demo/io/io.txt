@@ -1,0 +1,3 @@
+Write from mmapld!
+WWrite Hello world!
+rite Hello world!

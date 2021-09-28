@@ -16,11 +16,15 @@ public class SyncProducer {
         producer.setNamesrvAddr("localhost:9876");
         producer.start();
 
-        for (int i = 0; i < 100; i++) {
-            Message message = new Message("TopicTest", "TagA", ("Hello RocketMQ" + i).getBytes(StandardCharsets.UTF_8));
-            SendResult result = producer.send(message);
-            System.out.println(result);
-        }
+        Message message = new Message("TopicTest", "TagA", ("Hello World").getBytes(StandardCharsets.UTF_8));
+        SendResult result = producer.send(message);
+        System.out.println(result);
+
+//        for (int i = 0; i < 100; i++) {
+//            Message message = new Message("TopicTest", "TagA", ("Hello RocketMQ" + i).getBytes(StandardCharsets.UTF_8));
+//            SendResult result = producer.send(message);
+//            System.out.println(result);
+//        }
 
         producer.shutdown();
     }
