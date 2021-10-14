@@ -93,8 +93,8 @@ public class TestCompletableFutureSet {
 //        System.out.println(result.get());
 
         // thenCombine 并发执行
-//        CompletableFuture<String> result = doSomethingOne("abc").thenCombine(doSomethingTwo("cba"), (one, two) -> one + " " + two);
-//        System.out.println(result.get());
+        CompletableFuture<String> result = doSomethingOne("abc").thenCombine(doSomethingTwo("cba"), (one, two) -> one + " " + two);
+        System.out.println(result.get());
 
         // allOf 是所有的都并发执行
         List<CompletableFuture<String>> list = new ArrayList<>();

@@ -21,9 +21,14 @@ public class SyncProducer {
         System.out.println(result);
 
 //        for (int i = 0; i < 100; i++) {
-//            Message message = new Message("TopicTest", "TagA", ("Hello RocketMQ" + i).getBytes(StandardCharsets.UTF_8));
-//            SendResult result = producer.send(message);
-//            System.out.println(result);
+//            try {
+//
+//                Message message = new Message("TopicTest", "TagA", ("Hello RocketMQ" + i).getBytes(StandardCharsets.UTF_8));
+//                SendResult result = producer.send(message);
+//                System.out.println(result);
+//            } catch (Exception ignore) {
+//
+//            }
 //        }
 
         producer.shutdown();
