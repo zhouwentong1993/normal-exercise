@@ -732,7 +732,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     p = e;
                 }
             }
-            // 传入的 key 存在
+            // e 不为空时，代表链表中有该元素，需要替换。
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 // 当 不覆盖或者 oldValue 为空时，都会覆盖。也就是说 putIfAbsent 方法当 key 存在 && value 为空时，也会替换的。
@@ -838,7 +838,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                             // 如果为 0，那么意味着在扩容时，这些元素在前后数组中的位置是不变的。
                             // 简单理解：
                             //  假设扩容前 capacity = 16，扩容后 capacity = 32。
-                            //  扩容前的元素（e）的位置 = (e.hash) & (16-1) => (e.hash) & 1111
+                            //  扩容前的元素（e）的位置 = (e.hash) & (16-1) => (e.hash) &  1111
                             //  扩容后的元素（e）的位置 = (e.hash) & (32-1) => (e.hash) & 11111
                             //  很显然，扩容后元素的位置跟扩容前的元素的位置仅在最高位（第五位）上有区别，如果 e.hash 最高位是 0，则位置不变，如果是 1，则位置发生变更。
                             //  如何检测最高位是否为 0 呢？就可以通过 (e.hash) & 16 => (e.hash) & 10000，如果高位为 0，则返回 0，如果高位不为 0，则结果也不为 0。

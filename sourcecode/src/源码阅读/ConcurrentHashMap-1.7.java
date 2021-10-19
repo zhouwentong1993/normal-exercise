@@ -42,6 +42,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
+ *
  * A hash table supporting full concurrency of retrievals and
  * adjustable expected concurrency for updates. This class obeys the
  * same functional specification as {@link java.util.Hashtable}, and
@@ -53,9 +54,12 @@ import java.io.ObjectOutputStream;
  * interoperable with <tt>Hashtable</tt> in programs that rely on its
  * thread safety but not on its synchronization details.
  *
+ * 查询操作通常不会阻塞，所以会和 update 操作有些重合部分。
  * <p> Retrieval operations (including <tt>get</tt>) generally do not
  * block, so may overlap with update operations (including
- * <tt>put</tt> and <tt>remove</tt>). Retrievals reflect the results
+ * <tt>put</tt> and <tt>remove</tt>).
+ *
+ * Retrievals reflect the results
  * of the most recently <em>completed</em> update operations holding
  * upon their onset.  For aggregate operations such as <tt>putAll</tt>
  * and <tt>clear</tt>, concurrent retrievals may reflect insertion or
@@ -547,6 +551,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
          *
          * @return a new node if key not found, else null
          */
+        // 在没有获取到锁时的自旋操作。
         private HashEntry<K,V> scanAndLockForPut(K key, int hash, V value) {
             HashEntry<K,V> first = entryForHash(this, hash);
             HashEntry<K,V> e = first;
