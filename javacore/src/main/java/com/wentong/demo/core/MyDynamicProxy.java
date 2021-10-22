@@ -30,11 +30,13 @@ class DynamicProxy implements InvocationHandler {
         if (method.getName().startsWith("s")) {
             System.out.printf("method name: %s has bean proxied", method.getName());
             System.out.println();
-            return method.invoke(target, args);
-        } else {
-            return method.invoke(target, args);
         }
+        return method.invoke(target, args);
     }
+}
+
+interface Hello {
+    void sayHello();
 }
 
 class HelloImpl implements Hello {
@@ -46,8 +48,4 @@ class HelloImpl implements Hello {
     public void haha() {
         System.out.println("HelloImpl.haha");
     }
-}
-
-interface Hello {
-    void sayHello();
 }
