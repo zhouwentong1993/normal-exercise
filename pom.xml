@@ -42,6 +42,7 @@
         <module>es</module>
         <module>caffeine</module>
         <module>rocketmq</module>
+        <module>canal</module>
     </modules>
 
 </project>
