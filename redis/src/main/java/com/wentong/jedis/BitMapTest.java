@@ -4,7 +4,7 @@ import redis.clients.jedis.Jedis;
 
 /**
  * 测试 BitMap 的内存占用情况
- *
+ * <p>
  * 执行之前的内存占用情况
  * used_memory:1045312
  * used_memory_human:1020.81K
@@ -28,7 +28,7 @@ import redis.clients.jedis.Jedis;
  * mem_allocator:libc
  * active_defrag_running:0
  * lazyfree_pending_objects:0
- *
+ * <p>
  * used_memory:1171120
  * used_memory_human:1.12M
  * used_memory_rss:1056768
@@ -51,7 +51,7 @@ import redis.clients.jedis.Jedis;
  * mem_allocator:libc
  * active_defrag_running:0
  * lazyfree_pending_objects:0
- *
+ * <p>
  * 增加 126.07k 的内存占用
  */
 public class BitMapTest {
@@ -59,7 +59,7 @@ public class BitMapTest {
     public static void main(String[] args) {
         Jedis jedis = new Jedis();
 
-        jedis.setbit("test_bit", 1000000, "1");
+        jedis.setbit("test_bit", 1000000, true);
         System.out.println(jedis.getbit("test_bit", 1000000));
     }
 

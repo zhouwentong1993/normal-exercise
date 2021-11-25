@@ -45,7 +45,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>RELEASE</version>
+            <version>4.0.0-beta3</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

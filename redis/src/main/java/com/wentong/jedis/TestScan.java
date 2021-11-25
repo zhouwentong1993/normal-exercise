@@ -1,7 +1,7 @@
 package com.wentong.jedis;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanResult;
+import redis.clients.jedis.resps.ScanResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;
