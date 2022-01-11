@@ -1,5 +1,7 @@
 package com.wentong.demo.network.shortconnection;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -7,28 +9,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * 短连接代码示例
+ * 本来是用来测试长连接、短连接的，但是发现长连接和短连接的区别只是在是否及时关闭而已，所以无所谓了。
  */
-public class ShortConnection {
+public class BioConnection {
 
     public static void main(String[] args) throws Exception {
         try (ServerSocket serverSocket = new ServerSocket(8081)) {
             Socket socket = serverSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            StringBuilder body = new StringBuilder();
             while (true) {
                 String s = in.readLine();
                 System.out.println("received:" + s + " at:" + System.currentTimeMillis());
-                if (s == null) {
-                    break;
-                } else {
-                    body.append(s);
-                }
+                out.println(StringUtils.reverse(s));
             }
-            System.out.println(body);
-            out.println(body);
-            out.flush();
         }
     }
 
