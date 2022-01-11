@@ -16,6 +16,7 @@ public class BioConnection {
     public static void main(String[] args) throws Exception {
         try (ServerSocket serverSocket = new ServerSocket(8081)) {
             Socket socket = serverSocket.accept();
+            socket.setKeepAlive(true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             while (true) {
