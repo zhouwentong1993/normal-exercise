@@ -14,20 +14,20 @@ public class DelayedQueueConsumer {
     public static void main(String[] args) throws Exception{
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
-        config.useSingleServer().setAddress("http://127.0.0.1:6379");
+        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
         config.setExecutor(Executors.newFixedThreadPool(2000));
-        // 指定分布式锁中未添加超时时间的情i况，默认值
-        config.setLockWatchdogTimeout(30000);
 
         RedissonClient redisson = Redisson.create(config);
         RBlockingQueue<String> blockingFairQueue = redisson.getBlockingQueue("delay_queue");
 
         RDelayedQueue<String> delayedQueue = redisson.getDelayedQueue(blockingFairQueue);
-        delayedQueue.offer("helloworld00", 10, TimeUnit.MINUTES);
-        delayedQueue.offer("helloworld01", 20, TimeUnit.MINUTES);
+        delayedQueue.offer("helloworld00", 10, TimeUnit.SECONDS);
+        delayedQueue.offer("helloworld01", 20, TimeUnit.SECONDS);
         count();
         while (true) {
+            blockingFairQueue.poll();
             String take = blockingFairQueue.take();
+            blockingFairQueue.poll(10, TimeUnit.SECONDS);
             System.out.println(take);
         }
     }
