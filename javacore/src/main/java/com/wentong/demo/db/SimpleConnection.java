@@ -1,16 +1,20 @@
 package com.wentong.demo.db;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.UUID;
 
 public class SimpleConnection {
 
     // MySQL 8.0 以下版本 - JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/demo";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/canal-test";
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "root";
+    static final String PASS = "12345678";
 
     public static void main(String[] args) throws Exception {
         Connection conn = null;
@@ -27,22 +31,12 @@ public class SimpleConnection {
             System.out.println(" 实例化Statement对象...");
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT * FROM user";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            // 展开结果集数据库
-            while (rs.next()) {
-                // 通过字段检索
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-
-                // 输出数据
-                System.out.print("ID: " + id);
-                System.out.print(", 站点名称: " + name);
-                System.out.print("\n");
+            for (int i = 0; i < 10000; i++) {
+                sql = "insert into single_table (key1, key2, key3, key_part1, key_part2, key_part3, common_field) values (" + "'" + UUID.randomUUID().toString() + "'" + "," + i + "," + "'" + UUID.randomUUID().toString() + "'" + "," + "'" + UUID.randomUUID().toString() + "'" + "," + "'" + UUID.randomUUID().toString() + "'" + "," + "'" + UUID.randomUUID().toString() + "'" + "," + "'" + UUID.randomUUID().toString() + "'" + ");";
+                System.out.println(sql);
+                stmt.execute(sql);
             }
             // 完成后关闭
-            rs.close();
             stmt.close();
             conn.close();
         } catch (SQLException se) {
