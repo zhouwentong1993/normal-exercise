@@ -1,9 +1,5 @@
 package com.wentong;
 
-/**
- * Created by zhouwentong on 2018/7/25.
- */
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

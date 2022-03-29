@@ -1,15 +1,17 @@
 package com.wentong.demo.jvm;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OOMTest {
 
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < 100000; i++) {
-            Object o = new Object();
-
+        long counter = 0;
+        List<Person> list = new ArrayList<>();
+        while (true) {
+            list.add(new Person());
+            System.out.println("current count is: " + (++counter));
         }
-        TimeUnit.SECONDS.sleep(100);
     }
 
 }
