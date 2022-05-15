@@ -43,6 +43,7 @@
         <module>caffeine</module>
         <module>rocketmq</module>
         <module>canal</module>
+        <module>rabbitmq-demo</module>
     </modules>
 
 </project>

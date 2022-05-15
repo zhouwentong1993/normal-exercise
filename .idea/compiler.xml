@@ -26,6 +26,7 @@
         <module name="netty" />
         <module name="algorithm" />
         <module name="hystrix" />
+        <module name="rabbitmq-demo" />
         <module name="rocketmq" />
         <module name="mq" />
         <module name="rate-limiter" />
@@ -52,39 +53,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="admin-client" target="1.8" />
-      <module name="admin-server" target="1.8" />
-      <module name="algorithm" target="1.8" />
-      <module name="asm" target="8" />
-      <module name="aviator" target="1.8" />
-      <module name="caching" target="1.8" />
-      <module name="caffeine" target="1.8" />
-      <module name="canal" target="8" />
-      <module name="concurrent" target="1.8" />
-      <module name="demo" target="1.8" />
-      <module name="druid-demo" target="1.8" />
-      <module name="es" target="1.8" />
-      <module name="exercise" target="1.8" />
-      <module name="guava" target="1.8" />
-      <module name="hutool" target="1.8" />
-      <module name="hystrix" target="1.8" />
-      <module name="interview" target="1.8" />
-      <module name="javacore" target="1.8" />
-      <module name="microservices" target="1.8" />
-      <module name="mq" target="1.8" />
-      <module name="netty" target="1.8" />
       <module name="normal-exercise" target="1.8" />
       <module name="rate-limiter" target="1.8" />
-      <module name="redis" target="1.8" />
-      <module name="redisson" target="1.8" />
-      <module name="rocketmq" target="1.8" />
-      <module name="slf4j-demo" target="1.8" />
-      <module name="small-dependency" target="1.8" />
-      <module name="sourcecode" target="1.8" />
-      <module name="spock" target="1.8" />
-      <module name="spring" target="1.8" />
       <module name="spring-cache" target="1.8" />
-      <module name="springboot-admin" target="1.8" />
       <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
