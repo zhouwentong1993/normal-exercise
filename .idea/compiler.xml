@@ -20,6 +20,7 @@
         <module name="spring" />
         <module name="caffeine" />
         <module name="spock" />
+        <module name="java8" />
         <module name="zipkin-server" />
         <module name="javacore" />
         <module name="canal" />

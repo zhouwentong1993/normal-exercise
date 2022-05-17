@@ -44,6 +44,7 @@
         <module>rocketmq</module>
         <module>canal</module>
         <module>rabbitmq-demo</module>
+        <module>java8</module>
     </modules>
 
 </project>
