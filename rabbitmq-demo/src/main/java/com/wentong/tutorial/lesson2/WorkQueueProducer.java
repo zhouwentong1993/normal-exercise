@@ -1,4 +1,4 @@
-package com.wentong.tutorial.lession2;
+package com.wentong.tutorial.lesson2;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

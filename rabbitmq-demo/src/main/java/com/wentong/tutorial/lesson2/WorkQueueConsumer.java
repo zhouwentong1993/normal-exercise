@@ -1,10 +1,9 @@
-package com.wentong.tutorial.lession2;
+package com.wentong.tutorial.lesson2;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import com.wentong.tutorial.Util;
 
 import java.nio.charset.StandardCharsets;
 
@@ -25,7 +24,7 @@ public class WorkQueueConsumer {
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             try {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                Util.sleepSeconds(4);
+//                Util.sleepSeconds(4);
                 System.out.println(" [x] Received '" + message + "'");
             } finally {
                 // ack 机制，消费确认。
