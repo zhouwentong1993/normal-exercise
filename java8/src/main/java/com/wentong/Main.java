@@ -1,6 +1,7 @@
 package com.wentong;
 
 import com.wentong.vo.Dish;
+import com.wentong.vo.Student;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         List<Dish> menu = Dish.menu;
+        List<Student> collect3 = menu.stream().map(d -> new Student(d.getName(), d.getCalories())).collect(Collectors.toList());
+        System.out.println(collect3);
         List<String> collect = menu.stream().filter(d -> d.getCalories() < 400).sorted(Comparator.comparing(Dish::getCalories)).map(Dish::getName).limit(3).collect(Collectors.toList());
         System.out.println(collect);
 
