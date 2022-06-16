@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="spring-amqp" />
         <module name="druid-demo" />
         <module name="admin-client" />
         <module name="small-dependency" />
@@ -36,6 +37,7 @@
         <module name="rabbitmq" />
         <module name="slf4j-demo" />
         <module name="es" />
+        <module name="excel" />
         <module name="admin-server" />
         <module name="asm" />
         <module name="hutool" />

@@ -45,6 +45,8 @@
         <module>canal</module>
         <module>rabbitmq-demo</module>
         <module>java8</module>
+        <module>spring-amqp</module>
+        <module>excel</module>
     </modules>
 
 </project>
