@@ -1,12 +1,11 @@
 package com.wentong.config;
 
-import com.wentong.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * Created by zhouwentong on 2018/7/25.
@@ -14,18 +13,29 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        return new JedisConnectionFactory();
+    private int timeout = 2000;
+
+    @Bean(name = "jedis.pool")
+    @Autowired
+    public JedisPool jedisPool(@Qualifier("jedis.pool.config") JedisPoolConfig config) {
+        return new JedisPool(config, "localhost", 6379, timeout, null, 0);
     }
 
-    @Bean
-    public RedisTemplate<String, User> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, User> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new RedisObjectSerializer());
-        return template;
+    @Bean(name = "jedis.pool.config")
+    public JedisPoolConfig jedisPoolConfig() {
+        JedisPoolConfig config = new JedisPoolConfig();
+//        config.setMaxTotal(100);
+//        config.setMaxIdle(10);
+//        config.setMinIdle(10);
+//
+//        config.setMaxWaitMillis(100000);
+//        config.setJmxEnabled(true);
+//        config.setTestOnBorrow(true);
+//        config.setTestOnReturn(true);
+//        config.setTestWhileIdle(true);
+//        config.setTestOnCreate(true);
+//        config.setSoftMinEvictableIdleTimeMillis(180 * 1000L);
+        return config;
     }
 
 
